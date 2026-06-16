@@ -10,7 +10,7 @@ graph TD
     Auth[Authentication / Security]
     Gateway[Backend: Express.js API Gateway]
     DB[(PostgreSQL)]
-    AI_Service[AI Microservice: Python + LangChain]
+    AI_Service[AI Microservice: Python + LangChain]"
     ExternalAPI[External APIs: Weather, Market]
     LLM[Gemini API]
 
@@ -40,7 +40,7 @@ graph TD
 ### Multi-Agent Workflow
 
 ```mermaid
-sequenceDiagram
+sequenceDiagram"
     participant User
     participant Frontend
     participant Backend

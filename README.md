@@ -109,7 +109,11 @@ AgriCopilot/
 
 ✅ Week 1 Completed
 
+✅ Week 2 Completed
+
 ### Completed
+
+#### Week 1
 
 * Project ideation and scope definition
 * System architecture design
@@ -117,36 +121,94 @@ AgriCopilot/
 * Development roadmap creation
 * Technology stack finalization
 
-### In Progress
+#### Week 2
 
-* Week 2: Frontend Foundations
+* React + Vite application setup
+* Tailwind CSS integration
+* React Router configuration
+* Responsive navigation system
+* Home page development
+* About page development
+* Dashboard page development
+* Login page development
+* Reusable UI components
+* Premium SaaS-inspired UI design
+* Mobile responsive layouts
+
+### Current Application Pages
+
+* Home
+* About
+* Dashboard
+* Login
+
+### Current Frontend Features
+
+* Responsive Navbar
+* Hero Section
+* Feature Cards
+* Dashboard Widgets
+* Mobile Navigation Menu
+* Modern Footer
+* Responsive Layout
 
 ### Next Milestone
 
-* React application setup
-* Tailwind CSS integration
-* Application routing
-* Core layout development
+Week 3: UI/UX & Component Design
+
+Upcoming Focus:
+
+* Design system refinement
+* Advanced dashboard components
+* Enhanced user experience
+* Reusable UI library
+* Animations and micro-interactions
+
 
 
 ## Setup Instructions
 
+### Frontend Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/AgriCopilot.git
+cd AgriCopilot/frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:5173
+```
+
+### Current Dependencies
+
+* React
+* Vite
+* Tailwind CSS v4
+* React Router DOM
+* Lucide React
+
+### Backend & AI Services
+
 🚧 Coming Soon
 
-The project is currently in the planning and architecture phase (Week 1).
+Backend, database, authentication, and AI services will be implemented in upcoming development phases.
 
-Implementation of the frontend, backend, database, and AI services will begin in subsequent development phases.
-
-Detailed setup and installation instructions will be added as the project progresses.
-
-Planned setup guides:
-
-* Frontend (React + Tailwind CSS)
-* Backend (Node.js + Express)
-* AI Service (Python + FastAPI + LangChain)
-* PostgreSQL Database Configuration
-* Environment Variables Setup
-* Local Development Workflow
 
 ## Author
 
