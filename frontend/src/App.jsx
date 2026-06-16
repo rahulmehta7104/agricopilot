@@ -1,9 +1,20 @@
-export default function App() {
+import { BrowserRouter } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import AppRoutes from './routes/AppRoutes';
+
+function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-5xl font-bold text-green-600">
-        Tailwind Working 🚀
-      </h1>
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen flex flex-col font-sans">
+        <Navbar />
+        <main className="flex-grow">
+          <AppRoutes />
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
+
+export default App;
