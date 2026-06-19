@@ -2,22 +2,22 @@ import { Target, AlertCircle, Bot, Rocket, Cpu, Globe } from 'lucide-react';
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-300">
       {/* Decorative Backgrounds */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-emerald-200/20 blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full bg-blue-200/20 blur-[120px]" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-emerald-200/20 dark:bg-emerald-500/10 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full bg-blue-200/20 dark:bg-blue-500/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10 pt-24 pb-20 sm:pt-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-24">
-          <div className="inline-flex items-center justify-center p-2 rounded-2xl bg-emerald-100/50 text-emerald-600 mb-6 shadow-sm border border-emerald-100">
+          <div className="inline-flex items-center justify-center p-2 rounded-2xl bg-emerald-100/50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mb-6 shadow-sm border border-emerald-100 dark:border-emerald-500/20">
             <Globe className="h-6 w-6" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-slate-900">
-            Farming <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">Reimagined</span>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-slate-900 dark:text-white">
+            Farming <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300">Reimagined</span>
           </h1>
-          <p className="text-xl md:text-2xl text-slate-600 font-light max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 font-light max-w-2xl mx-auto">
             Empowering a new generation of farmers with advanced AI, data science, and predictive intelligence.
           </p>
         </div>
@@ -25,14 +25,14 @@ export default function About() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           
           {/* Mission Section */}
-          <section className="bg-white/60 backdrop-blur-2xl p-10 md:p-14 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60 hover:shadow-[0_20px_40px_rgba(16,185,129,0.05)] transition-all duration-500">
+          <section className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl p-10 md:p-14 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60 dark:border-slate-800 hover:shadow-[0_20px_40px_rgba(16,185,129,0.05)] transition-all duration-500">
             <div className="flex flex-col md:flex-row gap-10 items-start">
-              <div className="p-4 bg-emerald-50 rounded-3xl text-emerald-600 border border-emerald-100/50 shadow-sm shrink-0">
+              <div className="p-4 bg-emerald-50 dark:bg-emerald-500/10 rounded-3xl text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-500/20 shadow-sm shrink-0">
                 <Target className="h-8 w-8" />
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-4">Our Mission</h2>
-                <p className="text-slate-600 leading-relaxed text-lg font-light">
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Our Mission</h2>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg font-light">
                   To democratize access to advanced agricultural intelligence, helping farmers globally maximize their yield, minimize resource waste, and seamlessly adapt to rapidly changing climate conditions through the power of Artificial Intelligence.
                 </p>
               </div>
@@ -40,14 +40,14 @@ export default function About() {
           </section>
 
           {/* Problem Statement */}
-          <section className="bg-white/60 backdrop-blur-2xl p-10 md:p-14 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60 hover:shadow-[0_20px_40px_rgba(245,158,11,0.05)] transition-all duration-500">
+          <section className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl p-10 md:p-14 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60 dark:border-slate-800 hover:shadow-[0_20px_40px_rgba(245,158,11,0.05)] transition-all duration-500">
             <div className="flex flex-col md:flex-row gap-10 items-start">
-              <div className="p-4 bg-amber-50 rounded-3xl text-amber-600 border border-amber-100/50 shadow-sm shrink-0">
+              <div className="p-4 bg-amber-50 dark:bg-amber-500/10 rounded-3xl text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-500/20 shadow-sm shrink-0">
                 <AlertCircle className="h-8 w-8" />
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-4">The Challenge</h2>
-                <p className="text-slate-600 leading-relaxed text-lg font-light">
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">The Challenge</h2>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg font-light">
                   Modern agriculture faces unprecedented challenges. Unpredictable weather patterns, soil degradation, and fluctuating market prices make farming riskier than ever. Traditional intuition alone is no longer enough to ensure a profitable and sustainable harvest.
                 </p>
               </div>

@@ -1,12 +1,13 @@
-import { Cloud, Sprout, BarChart3, Bot, MapPin, Droplets, Sun, Wind, Bell } from 'lucide-react';
+import { Cloud, Sprout, BarChart3, Bot, MapPin, Droplets, Sun, Wind, Bell, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Card, Button } from '../components/ui';
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-hidden p-4 md:p-8">
-      {/* Background gradients */}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 relative overflow-hidden p-4 md:p-8 transition-colors duration-300">
+      {/* Background gradients for a subtle, premium look */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-emerald-100/40 blur-[100px]" />
-        <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-100/40 blur-[100px]" />
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-emerald-500/10 dark:bg-emerald-500/5 blur-[120px]" />
+        <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-blue-500/10 dark:bg-blue-500/5 blur-[120px]" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -14,19 +15,22 @@ export default function Dashboard() {
         {/* Top Section - Welcome Banner */}
         <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Welcome back, John</h1>
-            <div className="flex items-center text-slate-500 mt-3 gap-2 font-medium">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Overview
+            </h1>
+            <div className="flex items-center text-slate-500 dark:text-slate-400 mt-2 gap-2 font-medium text-sm">
               <MapPin className="h-4 w-4 text-emerald-500" />
               <span>Green Acres Farm, California</span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="p-3 bg-white/60 backdrop-blur-xl rounded-full border border-white/60 shadow-sm text-slate-600 hover:text-emerald-600 hover:bg-white transition-all">
+          <div className="flex flex-wrap items-center gap-3">
+            <button className="p-2.5 rounded-full text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-700 transition-colors dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200">
               <Bell className="h-5 w-5" />
             </button>
-            <div className="text-sm font-semibold text-slate-600 bg-white/60 backdrop-blur-xl px-5 py-3 rounded-full shadow-sm border border-white/60">
+            <div className="text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-800 hidden sm:block">
               {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
             </div>
+            <Button className="hidden sm:inline-flex">Generate Report</Button>
           </div>
         </header>
 
@@ -35,34 +39,38 @@ export default function Dashboard() {
           <StatCard 
             title="Weather Score" 
             value="85/100" 
-            trend="+2%" 
+            trend="+2.4%" 
             trendUp={true}
             icon={Cloud} 
-            color="blue"
+            color="text-blue-500"
+            bg="bg-blue-500/10"
           />
           <StatCard 
             title="Crop Health" 
-            value="Optimal" 
-            trend="Stable" 
+            value="92%" 
+            trend="+1.2%" 
             trendUp={true}
             icon={Sprout} 
-            color="emerald"
+            color="text-emerald-500"
+            bg="bg-emerald-500/10"
           />
           <StatCard 
             title="Yield Forecast" 
             value="1,240 lbs" 
-            trend="+12%" 
-            trendUp={true}
+            trend="-0.4%" 
+            trendUp={false}
             icon={BarChart3} 
-            color="indigo"
+            color="text-indigo-500"
+            bg="bg-indigo-500/10"
           />
           <StatCard 
-            title="AI Insights" 
+            title="Active Alerts" 
             value="4 New" 
             trend="Action Req." 
             trendUp={false}
             icon={Bot} 
-            color="amber"
+            color="text-amber-500"
+            bg="bg-amber-500/10"
           />
         </div>
 
@@ -73,53 +81,63 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-8">
             
             {/* Weather Widget */}
-            <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-amber-100/30 blur-[80px] rounded-full pointer-events-none" />
-              <div className="relative z-10">
-                <h2 className="text-2xl font-bold text-slate-900 mb-8">Micro-Climate Overview</h2>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-10 pb-10 border-b border-slate-200/50 gap-8">
+            <Card className="relative overflow-hidden p-0 border-0 shadow-lg dark:shadow-none bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800/50">
+              <div className="p-8 md:p-10">
+                <div className="flex justify-between items-start mb-8">
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">Micro-Climate</h2>
+                  <Button variant="outline" size="sm">Details</Button>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-8">
                   <div className="flex items-center gap-6">
-                    <Sun className="h-20 w-20 text-amber-400 drop-shadow-md" />
+                    <Sun className="h-16 w-16 text-amber-400 drop-shadow-sm" />
                     <div>
-                      <div className="text-5xl font-extrabold text-slate-900 tracking-tighter">72°</div>
-                      <div className="text-slate-500 font-medium mt-1">Partly Cloudy</div>
+                      <div className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tighter">72°</div>
+                      <div className="text-slate-500 dark:text-slate-400 font-medium mt-1">Partly Cloudy</div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-x-10 gap-y-5 bg-white/50 p-6 rounded-3xl border border-white">
-                    <div className="flex items-center gap-3 text-slate-700 font-medium">
-                      <Droplets className="h-6 w-6 text-blue-500" />
-                      <span>Humidity 45%</span>
+                  <div className="flex gap-6 sm:gap-10">
+                    <div>
+                      <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1 text-sm font-medium">
+                        <Droplets className="h-4 w-4 text-blue-500" /> Humidity
+                      </div>
+                      <div className="text-xl font-bold text-slate-900 dark:text-white">45%</div>
                     </div>
-                    <div className="flex items-center gap-3 text-slate-700 font-medium">
-                      <Wind className="h-6 w-6 text-teal-500" />
-                      <span>Wind 12 mph</span>
+                    <div>
+                      <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1 text-sm font-medium">
+                        <Wind className="h-4 w-4 text-teal-500" /> Wind
+                      </div>
+                      <div className="text-xl font-bold text-slate-900 dark:text-white">12 mph</div>
                     </div>
                   </div>
                 </div>
-                {/* Fake Chart Area */}
-                <div className="h-48 w-full flex items-end px-2 gap-3 relative">
-                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-50/50 to-transparent rounded-2xl border-b-2 border-emerald-200" />
+
+                {/* Micro-chart */}
+                <div className="h-32 w-full flex items-end gap-2 mt-8">
                   {[40, 50, 45, 60, 70, 65, 80, 75, 85, 90, 85, 80].map((h, i) => (
-                    <div key={i} className="relative z-10 w-full rounded-t-lg bg-gradient-to-t from-emerald-500 to-emerald-300 opacity-90 shadow-sm hover:opacity-100 transition-opacity cursor-pointer group" style={{ height: `${h}%` }}>
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">{h}%</div>
+                    <div key={i} className="flex-1 w-full relative group">
+                      <div 
+                        className="w-full bg-emerald-500/20 hover:bg-emerald-500 dark:bg-emerald-500/30 dark:hover:bg-emerald-400 rounded-t-md transition-colors duration-300"
+                        style={{ height: `${h}%` }}
+                      />
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Crop Recommendations Widget */}
-            <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60">
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-bold text-slate-900">Active Crop Sectors</h2>
-                <button className="text-sm text-emerald-600 font-semibold hover:text-emerald-700 bg-emerald-50 px-4 py-2 rounded-full hover:bg-emerald-100 transition-colors">View All</button>
+            <Card className="p-8 border-slate-200 dark:border-slate-800">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Active Crop Sectors</h2>
+                <Button variant="outline" size="sm">View All</Button>
               </div>
-              <div className="space-y-4">
-                <CropRow name="Winter Wheat" area="Sector A - 40 acres" health={92} />
-                <CropRow name="Soybeans" area="Sector B - 25 acres" health={78} />
-                <CropRow name="Corn" area="Sector C - 50 acres" health={88} />
+              <div className="space-y-3">
+                <CropRow name="Winter Wheat" area="Sector A • 40 acres" health={92} />
+                <CropRow name="Soybeans" area="Sector B • 25 acres" health={78} />
+                <CropRow name="Corn" area="Sector C • 50 acres" health={88} />
               </div>
-            </div>
+            </Card>
 
           </div>
 
@@ -127,15 +145,16 @@ export default function Dashboard() {
           <div className="space-y-8">
             
             {/* AI Insights Widget */}
-            <div className="bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl shadow-emerald-900/10 border border-slate-800 text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-500/10 blur-[60px] rounded-full pointer-events-none" />
+            <Card className="bg-slate-900 border-slate-800 text-white relative overflow-hidden shadow-xl dark:shadow-none p-8">
+              <div className="absolute top-0 right-0 w-[250px] h-[250px] bg-emerald-500/10 blur-[50px] rounded-full pointer-events-none" />
               <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="p-2.5 bg-emerald-500/20 rounded-xl text-emerald-400 border border-emerald-500/30">
-                    <Bot className="h-6 w-6" />
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400 border border-emerald-500/30">
+                    <Bot className="h-5 w-5" />
                   </div>
-                  <h2 className="text-2xl font-bold">AI Copilot Insights</h2>
+                  <h2 className="text-lg font-bold">Copilot Insights</h2>
                 </div>
+                
                 <div className="space-y-4">
                   <InsightCard 
                     title="Irrigation Warning" 
@@ -147,27 +166,23 @@ export default function Dashboard() {
                     desc="Corn futures are up 3% today. Consider forward contracting." 
                     urgent={false} 
                   />
-                  <InsightCard 
-                    title="Pest Forecast" 
-                    desc="Conditions ripe for aphids next week. Prepare preventative measures." 
-                    urgent={false} 
-                  />
                 </div>
-                <button className="w-full mt-8 py-4 px-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-sm font-semibold shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all transform hover:-translate-y-0.5 cursor-pointer">
+                
+                <Button className="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-white border-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
                   Chat with Copilot
-                </button>
+                </Button>
               </div>
-            </div>
+            </Card>
 
             {/* Recent Activity */}
-            <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60">
-              <h2 className="text-2xl font-bold text-slate-900 mb-8">Recent Activity</h2>
-              <div className="relative pl-5 space-y-8 border-l-2 border-slate-100 ml-3">
+            <Card className="p-8 border-slate-200 dark:border-slate-800">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Recent Activity</h2>
+              <div className="relative pl-4 space-y-6 border-l border-slate-200 dark:border-slate-700 ml-2">
                 <ActivityItem title="Fertilizer applied" time="2 hours ago" desc="Sector A - Nitrogen mix" />
                 <ActivityItem title="AI Report generated" time="Yesterday" desc="Weekly yield forecast completed." />
                 <ActivityItem title="System update" time="2 days ago" desc="New weather model deployed successfully." />
               </div>
-            </div>
+            </Card>
 
           </div>
         </div>
@@ -176,48 +191,45 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ title, value, trend, trendUp, icon: Icon, color }) {
-  const colorMap = {
-    blue: 'text-blue-600 bg-blue-50 border-blue-100/50',
-    emerald: 'text-emerald-600 bg-emerald-50 border-emerald-100/50',
-    indigo: 'text-indigo-600 bg-indigo-50 border-indigo-100/50',
-    amber: 'text-amber-600 bg-amber-50 border-amber-100/50',
-  };
-
+function StatCard({ title, value, trend, trendUp, icon: Icon, color, bg }) {
   return (
-    <div className="bg-white/60 backdrop-blur-xl p-6 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-white/60 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300">
-      <div className="flex justify-between items-start mb-6">
-        <div className={`p-3.5 rounded-2xl border ${colorMap[color]}`}>
-          <Icon className="h-6 w-6" />
+    <Card className="p-6">
+      <div className="flex justify-between items-start mb-4">
+        <div className={`p-2.5 rounded-xl ${bg} ${color}`}>
+          <Icon className="h-5 w-5" />
         </div>
-        <span className={`text-xs font-bold px-3 py-1.5 rounded-full shadow-sm ${trendUp ? 'bg-emerald-50 text-emerald-700 border border-emerald-100/50' : 'bg-amber-50 text-amber-700 border border-amber-100/50'}`}>
+        <div className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${trendUp ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400'}`}>
+          {trendUp ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
           {trend}
-        </span>
+        </div>
       </div>
       <div>
-        <p className="text-sm font-semibold text-slate-500 mb-1">{title}</p>
-        <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{value}</p>
+        <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">{title}</p>
+        <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
       </div>
-    </div>
+    </Card>
   );
 }
 
 function CropRow({ name, area, health }) {
   return (
-    <div className="flex items-center justify-between p-5 rounded-2xl bg-slate-50/80 border border-slate-100 hover:bg-slate-50 transition-colors">
-      <div className="flex items-center gap-5">
-        <div className="h-12 w-12 rounded-2xl bg-emerald-100/50 flex items-center justify-center border border-emerald-100">
-          <Sprout className="h-6 w-6 text-emerald-600" />
+    <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100/50 dark:border-slate-800/60 dark:bg-slate-800/30 dark:hover:bg-slate-800/50 transition-colors">
+      <div className="flex items-center gap-4">
+        <div className="h-10 w-10 rounded-lg bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+          <Sprout className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
         </div>
         <div>
-          <h4 className="font-bold text-slate-900">{name}</h4>
-          <p className="text-sm text-slate-500 font-medium">{area}</p>
+          <h4 className="font-semibold text-slate-900 dark:text-slate-100">{name}</h4>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{area}</p>
         </div>
       </div>
-      <div className="text-right">
-        <div className="text-sm font-extrabold text-slate-900 mb-2">{health}% Health</div>
-        <div className="w-32 h-2.5 bg-slate-200 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full" style={{ width: `${health}%` }}></div>
+      <div className="text-right w-24">
+        <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+          <span>Health</span>
+          <span>{health}%</span>
+        </div>
+        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${health}%` }}></div>
         </div>
       </div>
     </div>
@@ -226,12 +238,12 @@ function CropRow({ name, area, health }) {
 
 function InsightCard({ title, desc, urgent }) {
   return (
-    <div className={`p-5 rounded-2xl border backdrop-blur-md ${urgent ? 'bg-red-500/10 border-red-500/20' : 'bg-slate-800/50 border-slate-700/50 hover:bg-slate-800 transition-colors'}`}>
-      <div className="flex items-center gap-3 mb-2">
-        {urgent && <div className="h-2.5 w-2.5 rounded-full bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.8)] animate-pulse" />}
-        <h4 className="font-bold text-sm text-white">{title}</h4>
+    <div className={`p-4 rounded-xl border ${urgent ? 'bg-red-500/10 border-red-500/20' : 'bg-slate-800/50 border-slate-700/50'}`}>
+      <div className="flex items-center gap-2.5 mb-2">
+        {urgent && <div className="h-2 w-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.8)] animate-pulse" />}
+        <h4 className="font-semibold text-sm text-white">{title}</h4>
       </div>
-      <p className="text-slate-300 text-sm leading-relaxed font-light">{desc}</p>
+      <p className="text-slate-300 text-sm leading-relaxed">{desc}</p>
     </div>
   );
 }
@@ -239,10 +251,10 @@ function InsightCard({ title, desc, urgent }) {
 function ActivityItem({ title, time, desc }) {
   return (
     <div className="relative">
-      <div className="absolute -left-[29px] top-1.5 h-4 w-4 rounded-full border-[3px] border-emerald-500 bg-white shadow-sm" />
-      <h4 className="text-base font-bold text-slate-900">{title}</h4>
-      <p className="text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">{time}</p>
-      <p className="text-sm text-slate-600 font-medium">{desc}</p>
+      <div className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-emerald-500 bg-white dark:bg-slate-900" />
+      <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</h4>
+      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium my-1">{desc}</p>
+      <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold">{time}</p>
     </div>
   );
 }
