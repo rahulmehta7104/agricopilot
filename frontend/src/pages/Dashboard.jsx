@@ -23,14 +23,16 @@ export default function Dashboard() {
               <span>Green Acres Farm, California</span>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <button className="p-2.5 rounded-full text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-700 transition-colors dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200">
-              <Bell className="h-5 w-5" />
-            </button>
-            <div className="text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-800 hidden sm:block">
-              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <button className="p-2.5 rounded-xl text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-700 transition-colors dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 shrink-0">
+                <Bell className="h-5 w-5" />
+              </button>
+              <div className="flex-1 sm:flex-none text-center sm:text-left text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 truncate">
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+              </div>
             </div>
-            <Button className="hidden sm:inline-flex">Generate Report</Button>
+            <Button className="w-full sm:w-auto">Generate Report</Button>
           </div>
         </header>
 

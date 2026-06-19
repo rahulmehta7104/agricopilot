@@ -111,6 +111,8 @@ AgriCopilot/
 
 ✅ Week 2 Completed
 
+✅ Week 3 Completed
+
 ### Completed
 
 #### Week 1
@@ -135,6 +137,23 @@ AgriCopilot/
 * Premium SaaS-inspired UI design
 * Mobile responsive layouts
 
+#### Week 3
+
+* Designed low-fidelity wireframes in Figma
+* Created reusable UI component library
+* Implemented Button component with multiple variants and sizes
+* Implemented reusable Input component with validation support
+* Developed Modal component with keyboard accessibility
+* Added Toast notification system
+* Built Loader and Skeleton loading components
+* Created centralized UI component exports
+* Developed Component Showcase page
+* Implemented Dark/Light theme system
+* Added theme persistence using localStorage
+* Improved dashboard UI and user experience
+* Optimized layouts for desktop, tablet, and mobile devices
+* Tested responsiveness across 1440px, 768px, and 375px viewports
+
 ### Current Application Pages
 
 * Home
@@ -151,19 +170,63 @@ AgriCopilot/
 * Mobile Navigation Menu
 * Modern Footer
 * Responsive Layout
+* Dark / Light Theme Support
+* Theme Persistence
+* Component Showcase Page
+* Reusable UI Component Library
+* Toast Notifications
+* Modal System
+* Skeleton Loaders
+
+### UI Component Library
+
+The application includes a reusable component system located in:
+
+```text
+src/components/ui/
+```
+
+Components:
+
+* Button
+* Input
+* Modal
+* Toast
+* Loader
+* Card
+* ThemeToggle
+
+These components are designed to promote consistency, maintainability, and scalability across the application.
 
 ### Next Milestone
 
-Week 3: UI/UX & Component Design
+Week 4: Backend & API Development
 
 Upcoming Focus:
 
-* Design system refinement
-* Advanced dashboard components
-* Enhanced user experience
-* Reusable UI library
-* Animations and micro-interactions
+* Express.js backend setup
+* REST API development
+* API route architecture
+* Service layer implementation
+* Request validation
+* Integration with frontend
 
+
+
+## Internship Progress
+
+| Week | Module | Status |
+|--------|--------|--------|
+| Week 1 | Project Setup & Planning | ✅ Completed |
+| Week 2 | Frontend Foundations | ✅ Completed |
+| Week 3 | UI/UX & Component Design | ✅ Completed |
+| Week 4 | Backend & API Development | 🔄 In Progress |
+| Week 5 | Database Design | ⏳ Pending |
+| Week 6 | Authentication & Security | ⏳ Pending |
+| Week 7 | AI Integration | ⏳ Pending |
+| Week 8 | Frontend Integration & Polish | ⏳ Pending |
+| Week 9 | Deployment | ⏳ Pending |
+| Week 10 | Documentation & Portfolio | ⏳ Pending |
 
 
 ## Setup Instructions
