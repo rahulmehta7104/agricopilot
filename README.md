@@ -64,56 +64,45 @@ AgriCopilot/
 ## Development Roadmap
 
 ### Week 1
-
 * Project Planning
 * Architecture Design
 * Repository Setup
 
 ### Week 2
-
 * Frontend Foundations
 
 ### Week 3
-
 * UI/UX & Component Design
 
 ### Week 4
-
 * Backend & API Development
 
 ### Week 5
-
 * Database Design & Management
 
 ### Week 6
-
 * Authentication & Security
 
 ### Week 7
-
 * AI Integration
 
 ### Week 8
-
 * Frontend Integration & Polish
 
 ### Week 9
-
 * Deployment
 
 ### Week 10
-
 * Documentation & Portfolio
 
 ## Current Status
 
 ✅ Week 1 Completed
-
 ✅ Week 2 Completed
-
 ✅ Week 3 Completed
+✅ Week 4 Completed
 
-### Completed
+### Completed Work
 
 #### Week 1
 
@@ -154,6 +143,29 @@ AgriCopilot/
 * Optimized layouts for desktop, tablet, and mobile devices
 * Tested responsiveness across 1440px, 768px, and 375px viewports
 
+#### Week 4
+
+**Backend**
+* Express.js backend setup
+* REST API architecture
+* Crop Management API
+* CRUD endpoints
+* Search endpoint
+* Request validation
+* Centralized error handling middleware
+* Environment variable support
+* CORS configuration
+* Health check endpoint
+* In-memory data storage
+
+**Frontend Integration**
+* Connected React frontend to backend
+* Axios API service layer
+* Dynamic crop data rendering
+* Loading state
+* Error state
+* API integration with Dashboard
+
 ### Current Application Pages
 
 * Home
@@ -161,8 +173,9 @@ AgriCopilot/
 * Dashboard
 * Login
 
-### Current Frontend Features
+### Current Features
 
+#### Frontend
 * Responsive Navbar
 * Hero Section
 * Feature Cards
@@ -177,6 +190,30 @@ AgriCopilot/
 * Toast Notifications
 * Modal System
 * Skeleton Loaders
+* Backend API Integration
+* Dynamic Dashboard Data
+* Loading State
+* Error Handling
+
+#### Backend
+* Express REST API
+* CRUD Operations
+* Search Functionality
+* Request Validation
+* Error Handling Middleware
+* CORS
+* Environment Variables
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/crops` | Fetch a list of all crops |
+| GET | `/api/crops/:id` | Fetch details of a single crop by ID |
+| POST | `/api/crops` | Create a new crop record |
+| PUT | `/api/crops/:id` | Update an existing crop by ID |
+| DELETE | `/api/crops/:id` | Delete a crop by ID |
+| GET | `/api/crops/search?q=` | Search crops by name or season |
 
 ### UI Component Library
 
@@ -200,18 +237,15 @@ These components are designed to promote consistency, maintainability, and scala
 
 ### Next Milestone
 
-Week 4: Backend & API Development
+Week 5: Database Design & Management
 
 Upcoming Focus:
 
-* Express.js backend setup
-* REST API development
-* API route architecture
-* Service layer implementation
-* Request validation
-* Integration with frontend
-
-
+* PostgreSQL integration
+* Database schema
+* Persistent storage
+* Replace in-memory array
+* API integration with PostgreSQL
 
 ## Internship Progress
 
@@ -220,8 +254,8 @@ Upcoming Focus:
 | Week 1 | Project Setup & Planning | ✅ Completed |
 | Week 2 | Frontend Foundations | ✅ Completed |
 | Week 3 | UI/UX & Component Design | ✅ Completed |
-| Week 4 | Backend & API Development | 🔄 In Progress |
-| Week 5 | Database Design | ⏳ Pending |
+| Week 4 | Backend & API Development | ✅ Completed |
+| Week 5 | Database Design & Management | ⏳ Pending |
 | Week 6 | Authentication & Security | ⏳ Pending |
 | Week 7 | AI Integration | ⏳ Pending |
 | Week 8 | Frontend Integration & Polish | ⏳ Pending |
@@ -252,26 +286,52 @@ Start development server:
 npm run dev
 ```
 
-Open:
+### Backend Setup
 
-```text
-http://localhost:5173
+Navigate to the backend directory:
+
+```bash
+cd ../backend
+```
+*(or `cd backend` from the root)*
+
+Install dependencies:
+
+```bash
+npm install
 ```
 
-### Current Dependencies
+Start development server:
 
+```bash
+npm run dev
+```
+
+**Local URLs:**
+* Frontend URL: `http://localhost:5173`
+* Backend URL: `http://localhost:5000`
+
+### Dependencies
+
+#### Frontend
 * React
 * Vite
 * Tailwind CSS v4
 * React Router DOM
 * Lucide React
+* Axios
 
-### Backend & AI Services
+#### Backend
+* Express
+* CORS
+* dotenv
+* Nodemon
+
+### Database & AI Services
 
 🚧 Coming Soon
 
-Backend, database, authentication, and AI services will be implemented in upcoming development phases.
-
+Database, authentication, and AI services will be implemented in upcoming development phases.
 
 ## Author
 
