@@ -1,7 +1,27 @@
+import React, { useState, useEffect } from 'react';
 import { Cloud, Sprout, BarChart3, Bot, MapPin, Droplets, Sun, Wind, Bell, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Card, Button } from '../components/ui';
+import { getAllCrops } from '../services/api';
 
 export default function Dashboard() {
+  const [crops, setCrops] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCrops = async () => {
+      try {
+        const response = await getAllCrops();
+        setCrops(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load crops data. Please try again.');
+        setLoading(false);
+      }
+    };
+    fetchCrops();
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 relative overflow-hidden p-4 md:p-8 transition-colors duration-300">
       {/* Background gradients for a subtle, premium look */}
@@ -135,9 +155,28 @@ export default function Dashboard() {
                 <Button variant="outline" size="sm">View All</Button>
               </div>
               <div className="space-y-3">
-                <CropRow name="Winter Wheat" area="Sector A • 40 acres" health={92} />
-                <CropRow name="Soybeans" area="Sector B • 25 acres" health={78} />
-                <CropRow name="Corn" area="Sector C • 50 acres" health={88} />
+                {loading ? (
+                  <div className="text-center py-6">
+                    <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-emerald-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading crop data...</p>
+                  </div>
+                ) : error ? (
+                  <div className="text-center py-4 p-4 bg-red-50 dark:bg-red-500/10 rounded-xl border border-red-200 dark:border-red-500/20">
+                    <p className="text-sm font-medium text-red-600 dark:text-red-400">{error}</p>
+                    <Button variant="outline" size="sm" className="mt-3 text-xs" onClick={() => window.location.reload()}>Retry</Button>
+                  </div>
+                ) : crops.length === 0 ? (
+                  <div className="text-center py-4 text-slate-500 text-sm">No crops found.</div>
+                ) : (
+                  crops.slice(0, 3).map((crop) => (
+                    <CropRow 
+                      key={crop.id} 
+                      name={crop.cropName} 
+                      area={`${crop.season} • ${crop.soilType}`} 
+                      health={85 + (crop.id % 15)} 
+                    />
+                  ))
+                )}
               </div>
             </Card>
 
