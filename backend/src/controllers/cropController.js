@@ -1,29 +1,31 @@
 let crops = require('../data/crops');
+const validateCrop = require('../utils/validateCrop');
 
-// Helper to generate next auto-incrementing ID
-const getNextId = () => {
-  return crops.length > 0 ? Math.max(...crops.map(c => c.id)) + 1 : 1;
+// Helpers
+const getNextId = () => crops.length > 0 ? Math.max(...crops.map(c => c.id)) + 1 : 1;
+
+const findCropIndex = (id) => crops.findIndex(c => c.id === parseInt(id, 10));
+
+const throwError = (message, status) => {
+  const err = new Error(message);
+  err.status = status;
+  throw err;
 };
 
 // GET /api/crops
-exports.getAllCrops = (req, res) => {
+exports.getAllCrops = (req, res, next) => {
   try {
-    res.status(200).json({
-      success: true,
-      data: crops
-    });
+    res.status(200).json({ success: true, data: crops });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };
 
 // GET /api/crops/search?q=
-exports.searchCrops = (req, res) => {
+exports.searchCrops = (req, res, next) => {
   try {
     const { q } = req.query;
-    if (!q) {
-      return res.status(400).json({ success: false, message: "Search query 'q' is required" });
-    }
+    if (!q) throwError("Search query 'q' is required", 400);
     
     const query = q.toLowerCase();
     const filteredCrops = crops.filter(crop => 
@@ -31,40 +33,31 @@ exports.searchCrops = (req, res) => {
       crop.season.toLowerCase().includes(query)
     );
     
-    res.status(200).json({
-      success: true,
-      data: filteredCrops
-    });
+    res.status(200).json({ success: true, data: filteredCrops });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };
 
 // GET /api/crops/:id
-exports.getCropById = (req, res) => {
+exports.getCropById = (req, res, next) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    const crop = crops.find(c => c.id === id);
+    const index = findCropIndex(req.params.id);
+    if (index === -1) throwError("Crop Not Found", 404);
     
-    if (!crop) {
-      return res.status(404).json({ success: false, message: "Crop Not Found" });
-    }
-    
-    res.status(200).json({ success: true, data: crop });
+    res.status(200).json({ success: true, data: crops[index] });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };
 
 // POST /api/crops
-exports.createCrop = (req, res) => {
+exports.createCrop = (req, res, next) => {
   try {
-    const { cropName, season, soilType, expectedYield, marketPrice } = req.body;
+    const validationError = validateCrop(req.body);
+    if (validationError) throwError(validationError, 400);
     
-    // Basic validation
-    if (!cropName || !season || !soilType || expectedYield === undefined || marketPrice === undefined) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
-    }
+    const { cropName, season, soilType, expectedYield, marketPrice } = req.body;
     
     const newCrop = {
       id: getNextId(),
@@ -78,53 +71,47 @@ exports.createCrop = (req, res) => {
     crops.push(newCrop);
     res.status(201).json({ success: true, data: newCrop });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };
 
 // PUT /api/crops/:id
-exports.updateCrop = (req, res) => {
+exports.updateCrop = (req, res, next) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    const cropIndex = crops.findIndex(c => c.id === id);
+    const index = findCropIndex(req.params.id);
+    if (index === -1) throwError("Crop Not Found", 404);
     
-    if (cropIndex === -1) {
-      return res.status(404).json({ success: false, message: "Crop Not Found" });
-    }
+    const validationError = validateCrop(req.body, true);
+    if (validationError) throwError(validationError, 400);
     
     const { cropName, season, soilType, expectedYield, marketPrice } = req.body;
+    const existingCrop = crops[index];
     
-    // Create updated object, retaining old values for missing fields
     const updatedCrop = {
-      ...crops[cropIndex],
-      cropName: cropName !== undefined ? cropName : crops[cropIndex].cropName,
-      season: season !== undefined ? season : crops[cropIndex].season,
-      soilType: soilType !== undefined ? soilType : crops[cropIndex].soilType,
-      expectedYield: expectedYield !== undefined ? Number(expectedYield) : crops[cropIndex].expectedYield,
-      marketPrice: marketPrice !== undefined ? Number(marketPrice) : crops[cropIndex].marketPrice
+      ...existingCrop,
+      cropName: cropName !== undefined ? cropName : existingCrop.cropName,
+      season: season !== undefined ? season : existingCrop.season,
+      soilType: soilType !== undefined ? soilType : existingCrop.soilType,
+      expectedYield: expectedYield !== undefined ? Number(expectedYield) : existingCrop.expectedYield,
+      marketPrice: marketPrice !== undefined ? Number(marketPrice) : existingCrop.marketPrice
     };
     
-    crops[cropIndex] = updatedCrop;
+    crops[index] = updatedCrop;
     res.status(200).json({ success: true, data: updatedCrop });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };
 
 // DELETE /api/crops/:id
-exports.deleteCrop = (req, res) => {
+exports.deleteCrop = (req, res, next) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    const cropIndex = crops.findIndex(c => c.id === id);
+    const index = findCropIndex(req.params.id);
+    if (index === -1) throwError("Crop Not Found", 404);
     
-    if (cropIndex === -1) {
-      return res.status(404).json({ success: false, message: "Crop Not Found" });
-    }
-    
-    crops.splice(cropIndex, 1);
-    // As per requirements: 204 implies "Delete Successful" and typically returns no content
+    crops.splice(index, 1);
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };

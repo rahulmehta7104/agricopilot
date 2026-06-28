@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const indexRoutes = require('./routes/index');
 const cropRoutes = require('./routes/cropRoutes');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -14,5 +15,15 @@ app.use(express.json());
 // API Routes
 app.use('/', indexRoutes);
 app.use('/api/crops', cropRoutes);
+
+// Unknown Routes Handler
+app.use((req, res, next) => {
+  const error = new Error("Route not found");
+  error.status = 404;
+  next(error);
+});
+
+// Centralized Error Handler
+app.use(errorHandler);
 
 module.exports = app;
