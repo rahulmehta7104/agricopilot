@@ -312,6 +312,25 @@ Start development server:
 npm run dev
 ```
 
+### Database Setup
+
+Our backend uses PostgreSQL and Prisma ORM. Follow these steps to initialize your database:
+
+1. Ensure you are in the `backend` directory.
+2. Create a `.env` file in the root of the `backend` directory:
+   ```bash
+   cp .env.example .env
+   ```
+3. Update the `DATABASE_URL` in `.env` with your PostgreSQL connection string (we use Supabase).
+4. Run Prisma migrations to generate the tables:
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+5. Seed the database with initial crops and mock data:
+   ```bash
+   npx prisma db seed
+   ```
+
 ### Backend Setup
 
 Navigate to the backend directory:
@@ -358,7 +377,63 @@ npm run dev
 
 ### Database & AI Services
 
-Database implemented via **PostgreSQL (Supabase)** using **Prisma ORM**.
+#### Database Choice & Architecture
+AgriCopilot is built on **PostgreSQL (via Supabase)** using **Prisma ORM**. 
+- **Relational Integrity**: As an enterprise app, we have strict relationships between Users, Farms, Crops, and AI Recommendations. PostgreSQL ensures ACID compliance and strict foreign key constraints.
+- **JSONB Support**: Our AI Copilot relies on storing unstructured model metadata (like LLM prompts, token counts, and prediction confidence intervals). PostgreSQL's `JSONB` column type is perfect for hybrid structured/unstructured AI data.
+- **Prisma ORM**: Provides ultimate type-safety and rapid schema migrations, acting as the perfect bridge between our Express/TypeScript backend and Postgres.
+
+#### Schema Diagram
+Below is the ER schema diagram mapping our database architecture:
+
+```mermaid
+erDiagram
+    users ||--o| farmer_profiles : "has one"
+    users ||--o{ ai_chat_sessions : "has many"
+    
+    farmer_profiles ||--o{ farms : "manages"
+    
+    farms ||--o{ farm_crops : "plants"
+    farms ||--o{ recommendations : "receives"
+    
+    crops ||--o{ farm_crops : "is planted as"
+    crops ||--o{ recommendations : "associated with"
+    
+    recommendations ||--o{ recommendation_feedback : "receives"
+    
+    ai_chat_sessions ||--o{ ai_chat_messages : "contains"
+
+    users {
+        uuid id PK
+        string email UK
+    }
+    farmer_profiles {
+        uuid id PK
+        uuid userId FK
+    }
+    farms {
+        uuid id PK
+        uuid profileId FK
+        string name
+    }
+    crops {
+        uuid id PK
+        string name UK
+    }
+    farm_crops {
+        uuid id PK
+        uuid farmId FK
+        uuid cropId FK
+        enum status
+    }
+    recommendations {
+        uuid id PK
+        uuid farmId FK
+        enum type
+        json metadata
+    }
+```
+
 Authentication and AI services will be implemented in upcoming development phases.
 
 ## Author
