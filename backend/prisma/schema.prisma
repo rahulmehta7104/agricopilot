@@ -1,0 +1,214 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  FARMER
+  EXPERT
+}
+
+enum Unit {
+  ACRES
+  HECTARES
+  SQ_METERS
+}
+
+enum CropStatus {
+  PLANNED
+  GROWING
+  HARVESTED
+  FAILED
+}
+
+enum RecommendationType {
+  CROP
+  FERTILIZER
+  IRRIGATION
+  DISEASE
+  WEATHER
+  MARKET
+  SCHEME
+}
+
+enum RecommendationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+model User {
+  id                      String   @id @default(uuid()) @db.Uuid
+  email                   String?  @unique
+  phone                   String?  @unique
+  role                    Role     @default(FARMER)
+  preferredLanguage       String?  @default("en")
+  preferredUnits          Unit?    @default(ACRES)
+  timezone                String?  @default("UTC")
+  notificationPreferences Json?
+
+  createdAt               DateTime @default(now()) @db.Timestamptz
+  updatedAt               DateTime @updatedAt @db.Timestamptz
+
+  farmerProfile           FarmerProfile?
+  chatSessions            AiChatSession[]
+
+  @@map("users")
+}
+
+model FarmerProfile {
+  id                 String   @id @default(uuid()) @db.Uuid
+  userId             String   @unique @db.Uuid
+  fullName           String
+  totalLandHolding   Decimal? @db.Decimal(10, 2)
+
+  createdAt          DateTime @default(now()) @db.Timestamptz
+  updatedAt          DateTime @updatedAt @db.Timestamptz
+
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  farms              Farm[]
+
+  @@map("farmer_profiles")
+}
+
+model Farm {
+  id              String   @id @default(uuid()) @db.Uuid
+  profileId       String   @db.Uuid
+  name            String
+  size            Decimal  @db.Decimal(10, 2)
+  unit            Unit     @default(ACRES)
+
+  createdAt       DateTime @default(now()) @db.Timestamptz
+  updatedAt       DateTime @updatedAt @db.Timestamptz
+
+  profile         FarmerProfile    @relation(fields: [profileId], references: [id], onDelete: Restrict)
+  crops           FarmCrop[]
+  recommendations Recommendation[]
+
+  @@index([profileId])
+  @@map("farms")
+}
+
+model Crop {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String   @unique
+  scientificName String?
+
+  createdAt      DateTime @default(now()) @db.Timestamptz
+  updatedAt      DateTime @updatedAt @db.Timestamptz
+
+  farmCrops      FarmCrop[]
+  recommendations Recommendation[]
+
+  @@map("crops")
+}
+
+model FarmCrop {
+  id                  String     @id @default(uuid()) @db.Uuid
+  farmId              String     @db.Uuid
+  cropId              String     @db.Uuid
+  status              CropStatus @default(PLANNED)
+  season              String?
+  cropCycle           String?
+  expectedHarvestDate DateTime?  @db.Timestamptz
+  actualHarvestDate   DateTime?  @db.Timestamptz
+  yieldEstimate       Decimal?   @db.Decimal(10, 2)
+
+  createdAt           DateTime   @default(now()) @db.Timestamptz
+  updatedAt           DateTime   @updatedAt @db.Timestamptz
+
+  farm                Farm       @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  crop                Crop       @relation(fields: [cropId], references: [id], onDelete: Restrict)
+
+  @@index([farmId])
+  @@index([cropId])
+  @@map("farm_crops")
+}
+
+model Recommendation {
+  id            String               @id @default(uuid()) @db.Uuid
+  farmId        String               @db.Uuid
+  cropId        String?              @db.Uuid
+  type          RecommendationType
+  title         String
+  description   String               @db.Text
+  reasoning     String?              @db.Text
+  confidence    Decimal?             @db.Decimal(5, 4)
+  modelVersion  String?
+  promptVersion String?
+  status        RecommendationStatus @default(PENDING)
+  metadata      Json?
+
+  createdAt     DateTime             @default(now()) @db.Timestamptz
+  updatedAt     DateTime             @updatedAt @db.Timestamptz
+
+  farm          Farm                 @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  crop          Crop?                @relation(fields: [cropId], references: [id], onDelete: SetNull)
+  feedbacks     RecommendationFeedback[]
+
+  @@index([farmId, type])
+  @@index([createdAt])
+  @@map("recommendations")
+}
+
+model RecommendationFeedback {
+  id               String   @id @default(uuid()) @db.Uuid
+  recommendationId String   @db.Uuid
+  rating           Int?
+  feedback         String?  @db.Text
+  implemented      Boolean  @default(false)
+  implementedAt    DateTime? @db.Timestamptz
+
+  createdAt        DateTime @default(now()) @db.Timestamptz
+  updatedAt        DateTime @updatedAt @db.Timestamptz
+
+  recommendation   Recommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+
+  @@index([recommendationId])
+  @@map("recommendation_feedback")
+}
+
+model AiChatSession {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  title     String   @default("New Chat")
+
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  AiChatMessage[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("ai_chat_sessions")
+}
+
+model AiChatMessage {
+  id          String      @id @default(uuid()) @db.Uuid
+  sessionId   String      @db.Uuid
+  role        MessageRole
+  content     String      @db.Text
+  llmMetadata Json?
+
+  createdAt   DateTime    @default(now()) @db.Timestamptz
+  updatedAt   DateTime    @updatedAt @db.Timestamptz
+
+  session     AiChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([createdAt])
+  @@map("ai_chat_messages")
+}
