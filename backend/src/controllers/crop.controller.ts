@@ -29,3 +29,43 @@ export const getAllCrops = async (req: Request, res: Response): Promise<void> =>
     res.status(400).json({ status: 'error', message: error.message });
   }
 };
+
+export const getCropById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const crop = await cropRepo.findById((req.params as any).id);
+    if (!crop) {
+      res.status(404).json({ status: 'error', message: 'Crop not found' });
+      return;
+    }
+    res.status(200).json({ status: 'success', data: crop });
+  } catch (error: any) {
+    res.status(400).json({ status: 'error', message: error.message });
+  }
+};
+
+export const createCrop = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const crop = await cropRepo.create(req.body);
+    res.status(201).json({ status: 'success', data: crop });
+  } catch (error: any) {
+    res.status(400).json({ status: 'error', message: error.message });
+  }
+};
+
+export const updateCrop = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const crop = await cropRepo.update((req.params as any).id, req.body);
+    res.status(200).json({ status: 'success', data: crop });
+  } catch (error: any) {
+    res.status(400).json({ status: 'error', message: error.message });
+  }
+};
+
+export const deleteCrop = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const crop = await cropRepo.delete((req.params as any).id);
+    res.status(200).json({ status: 'success', data: crop });
+  } catch (error: any) {
+    res.status(400).json({ status: 'error', message: error.message });
+  }
+};
