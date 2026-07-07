@@ -101,6 +101,7 @@ AgriCopilot/
 ✅ Week 2 Completed
 ✅ Week 3 Completed
 ✅ Week 4 Completed
+✅ Week 5 Completed
 
 ### Completed Work
 
@@ -166,6 +167,18 @@ AgriCopilot/
 * Error state
 * API integration with Dashboard
 
+#### Week 5
+
+**Database & Architecture**
+* Enterprise Repository Pattern Architecture
+* Service & Controller Layers implementation
+* PostgreSQL integration via Supabase Pooler
+* Prisma ORM schema design & migrations
+* Zod validation middleware for all endpoints
+* Unified Dashboard composite endpoint
+* Database seeding with master catalog data
+* Full modular routing for Users, Farms, Recommendations, and AI Chat
+
 ### Current Application Pages
 
 * Home
@@ -203,6 +216,10 @@ AgriCopilot/
 * Error Handling Middleware
 * CORS
 * Environment Variables
+* PostgreSQL Database
+* Prisma ORM
+* Repository Pattern
+* Enterprise Architecture
 
 ### API Endpoints
 
@@ -214,6 +231,16 @@ AgriCopilot/
 | PUT | `/api/crops/:id` | Update an existing crop by ID |
 | DELETE | `/api/crops/:id` | Delete a crop by ID |
 | GET | `/api/crops/search?q=` | Search crops by name or season |
+
+### New Enterprise Endpoints (Week 5)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/dashboard` | Aggregated dashboard telemetry and data |
+| POST | `/api/users/register` | Register a new user |
+| GET | `/api/farms/profile/:id` | Get farms for a profile |
+| POST | `/api/recommendations` | Generate an AI recommendation |
+| POST | `/api/chat/message` | Send message to AI Copilot |
 
 ### UI Component Library
 
@@ -237,15 +264,14 @@ These components are designed to promote consistency, maintainability, and scala
 
 ### Next Milestone
 
-Week 5: Database Design & Management
+Week 6: Authentication & Security
 
 Upcoming Focus:
 
-* PostgreSQL integration
-* Database schema
-* Persistent storage
-* Replace in-memory array
-* API integration with PostgreSQL
+* JWT Authentication
+* Route protection
+* User sessions
+* Password hashing
 
 ## Internship Progress
 
@@ -255,7 +281,7 @@ Upcoming Focus:
 | Week 2 | Frontend Foundations | ✅ Completed |
 | Week 3 | UI/UX & Component Design | ✅ Completed |
 | Week 4 | Backend & API Development | ✅ Completed |
-| Week 5 | Database Design & Management | ⏳ Pending |
+| Week 5 | Database Design & Management | ✅ Completed |
 | Week 6 | Authentication & Security | ⏳ Pending |
 | Week 7 | AI Integration | ⏳ Pending |
 | Week 8 | Frontend Integration & Polish | ⏳ Pending |
@@ -309,7 +335,7 @@ npm run dev
 
 **Local URLs:**
 * Frontend URL: `http://localhost:5173`
-* Backend URL: `http://localhost:5000`
+* Backend URL: `http://localhost:3000`
 
 ### Dependencies
 
@@ -326,12 +352,14 @@ npm run dev
 * CORS
 * dotenv
 * Nodemon
+* Prisma
+* Zod
+* PostgreSQL (Supabase)
 
 ### Database & AI Services
 
-🚧 Coming Soon
-
-Database, authentication, and AI services will be implemented in upcoming development phases.
+Database implemented via **PostgreSQL (Supabase)** using **Prisma ORM**.
+Authentication and AI services will be implemented in upcoming development phases.
 
 ## Author
 
