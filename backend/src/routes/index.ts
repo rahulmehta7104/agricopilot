@@ -3,6 +3,8 @@ import userRoutes from './user.routes';
 import farmRoutes from './farm.routes';
 import recommendationRoutes from './recommendation.routes';
 import aiChatRoutes from './ai-chat.routes';
+import cropRoutes from './crop.routes';
+import dashboardRoutes from './dashboard.routes';
 
 const router = Router();
 
@@ -11,5 +13,7 @@ router.use('/users', userRoutes);
 router.use('/farms', farmRoutes);
 router.use('/recommendations', recommendationRoutes);
 router.use('/chat', aiChatRoutes);
+router.use('/crops', cropRoutes);
+router.use('/dashboard', dashboardRoutes);
 
 export default router;

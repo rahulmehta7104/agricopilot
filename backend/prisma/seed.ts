@@ -26,6 +26,18 @@ async function main() {
     data: { name: 'Soybean', scientificName: 'Glycine max' },
   });
 
+  const corn = await prisma.crop.create({
+    data: { name: 'Corn', scientificName: 'Zea mays' },
+  });
+
+  const cotton = await prisma.crop.create({
+    data: { name: 'Cotton', scientificName: 'Gossypium' },
+  });
+
+  const rice = await prisma.crop.create({
+    data: { name: 'Rice', scientificName: 'Oryza sativa' },
+  });
+
   // 3. Seed User & Profile
   const user = await prisma.user.create({
     data: {

@@ -1,26 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { Cloud, Sprout, BarChart3, Bot, MapPin, Droplets, Sun, Wind, Bell, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Card, Button } from '../components/ui';
-import { getAllCrops } from '../services/api';
+import { getDashboardData } from '../services/api';
 
 export default function Dashboard() {
-  const [crops, setCrops] = useState([]);
+  const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCrops = async () => {
+    const fetchDashboard = async () => {
       try {
-        const response = await getAllCrops();
-        setCrops(response.data.data);
+        const response = await getDashboardData();
+        setDashboard(response.data.data);
         setLoading(false);
       } catch (err) {
-        setError('Failed to load crops data. Please try again.');
+        setError('Failed to load dashboard data. Please try again.');
         setLoading(false);
       }
     };
-    fetchCrops();
+    fetchDashboard();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-500 border-r-transparent align-[-0.125em]"></div>
+          <p className="mt-4 text-slate-500 font-medium">Loading Dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !dashboard) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
+        <div className="text-center p-8 bg-red-50 dark:bg-red-500/10 rounded-2xl border border-red-200 dark:border-red-500/20 max-w-md w-full">
+          <p className="text-red-600 dark:text-red-400 font-medium mb-4">{error || "Failed to parse data"}</p>
+          <Button onClick={() => window.location.reload()}>Retry Connection</Button>
+        </div>
+      </div>
+    );
+  }
+
+  const { farmName, stats, weather, crops, insights, activities } = dashboard;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 relative overflow-hidden p-4 md:p-8 transition-colors duration-300">
@@ -40,7 +64,7 @@ export default function Dashboard() {
             </h1>
             <div className="flex items-center text-slate-500 dark:text-slate-400 mt-2 gap-2 font-medium text-sm">
               <MapPin className="h-4 w-4 text-emerald-500" />
-              <span>Green Acres Farm, California</span>
+              <span>{farmName}</span>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
@@ -60,36 +84,36 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <StatCard 
             title="Weather Score" 
-            value="85/100" 
-            trend="+2.4%" 
-            trendUp={true}
+            value={stats.weatherScore.value} 
+            trend={stats.weatherScore.trend} 
+            trendUp={stats.weatherScore.trendUp}
             icon={Cloud} 
             color="text-blue-500"
             bg="bg-blue-500/10"
           />
           <StatCard 
             title="Crop Health" 
-            value="92%" 
-            trend="+1.2%" 
-            trendUp={true}
+            value={stats.cropHealth.value} 
+            trend={stats.cropHealth.trend} 
+            trendUp={stats.cropHealth.trendUp}
             icon={Sprout} 
             color="text-emerald-500"
             bg="bg-emerald-500/10"
           />
           <StatCard 
             title="Yield Forecast" 
-            value="1,240 lbs" 
-            trend="-0.4%" 
-            trendUp={false}
+            value={stats.yieldForecast.value} 
+            trend={stats.yieldForecast.trend} 
+            trendUp={stats.yieldForecast.trendUp}
             icon={BarChart3} 
             color="text-indigo-500"
             bg="bg-indigo-500/10"
           />
           <StatCard 
             title="Active Alerts" 
-            value="4 New" 
-            trend="Action Req." 
-            trendUp={false}
+            value={stats.activeAlerts.value} 
+            trend={stats.activeAlerts.trend} 
+            trendUp={stats.activeAlerts.trendUp}
             icon={Bot} 
             color="text-amber-500"
             bg="bg-amber-500/10"
@@ -114,8 +138,8 @@ export default function Dashboard() {
                   <div className="flex items-center gap-6">
                     <Sun className="h-16 w-16 text-amber-400 drop-shadow-sm" />
                     <div>
-                      <div className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tighter">72°</div>
-                      <div className="text-slate-500 dark:text-slate-400 font-medium mt-1">Partly Cloudy</div>
+                      <div className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tighter">{weather.temperature}°</div>
+                      <div className="text-slate-500 dark:text-slate-400 font-medium mt-1">{weather.condition}</div>
                     </div>
                   </div>
                   <div className="flex gap-6 sm:gap-10">
@@ -123,20 +147,20 @@ export default function Dashboard() {
                       <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1 text-sm font-medium">
                         <Droplets className="h-4 w-4 text-blue-500" /> Humidity
                       </div>
-                      <div className="text-xl font-bold text-slate-900 dark:text-white">45%</div>
+                      <div className="text-xl font-bold text-slate-900 dark:text-white">{weather.humidity}</div>
                     </div>
                     <div>
                       <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1 text-sm font-medium">
                         <Wind className="h-4 w-4 text-teal-500" /> Wind
                       </div>
-                      <div className="text-xl font-bold text-slate-900 dark:text-white">12 mph</div>
+                      <div className="text-xl font-bold text-slate-900 dark:text-white">{weather.wind}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Micro-chart */}
                 <div className="h-32 w-full flex items-end gap-2 mt-8">
-                  {[40, 50, 45, 60, 70, 65, 80, 75, 85, 90, 85, 80].map((h, i) => (
+                  {weather.chart.map((h, i) => (
                     <div key={i} className="flex-1 w-full relative group">
                       <div 
                         className="w-full bg-emerald-500/20 hover:bg-emerald-500 dark:bg-emerald-500/30 dark:hover:bg-emerald-400 rounded-t-md transition-colors duration-300"
@@ -155,25 +179,15 @@ export default function Dashboard() {
                 <Button variant="outline" size="sm">View All</Button>
               </div>
               <div className="space-y-3">
-                {loading ? (
-                  <div className="text-center py-6">
-                    <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-emerald-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading crop data...</p>
-                  </div>
-                ) : error ? (
-                  <div className="text-center py-4 p-4 bg-red-50 dark:bg-red-500/10 rounded-xl border border-red-200 dark:border-red-500/20">
-                    <p className="text-sm font-medium text-red-600 dark:text-red-400">{error}</p>
-                    <Button variant="outline" size="sm" className="mt-3 text-xs" onClick={() => window.location.reload()}>Retry</Button>
-                  </div>
-                ) : crops.length === 0 ? (
+                {crops.length === 0 ? (
                   <div className="text-center py-4 text-slate-500 text-sm">No crops found.</div>
                 ) : (
-                  crops.slice(0, 3).map((crop) => (
+                  crops.map((crop) => (
                     <CropRow 
                       key={crop.id} 
                       name={crop.cropName} 
                       area={`${crop.season} • ${crop.soilType}`} 
-                      health={85 + (crop.id % 15)} 
+                      health={crop.health} 
                     />
                   ))
                 )}
@@ -197,16 +211,18 @@ export default function Dashboard() {
                 </div>
                 
                 <div className="space-y-4">
-                  <InsightCard 
-                    title="Irrigation Warning" 
-                    desc="Soil moisture dropping in Sector B. Suggest irrigating tomorrow morning." 
-                    urgent={true} 
-                  />
-                  <InsightCard 
-                    title="Favorable Market" 
-                    desc="Corn futures are up 3% today. Consider forward contracting." 
-                    urgent={false} 
-                  />
+                  {insights.length === 0 ? (
+                    <div className="text-slate-400 text-sm">No new insights.</div>
+                  ) : (
+                    insights.map(insight => (
+                      <InsightCard 
+                        key={insight.id}
+                        title={insight.title} 
+                        desc={insight.desc} 
+                        urgent={insight.urgent} 
+                      />
+                    ))
+                  )}
                 </div>
                 
                 <Button className="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-white border-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
@@ -219,9 +235,18 @@ export default function Dashboard() {
             <Card className="p-8 border-slate-200 dark:border-slate-800">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Recent Activity</h2>
               <div className="relative pl-4 space-y-6 border-l border-slate-200 dark:border-slate-700 ml-2">
-                <ActivityItem title="Fertilizer applied" time="2 hours ago" desc="Sector A - Nitrogen mix" />
-                <ActivityItem title="AI Report generated" time="Yesterday" desc="Weekly yield forecast completed." />
-                <ActivityItem title="System update" time="2 days ago" desc="New weather model deployed successfully." />
+                {activities.length === 0 ? (
+                  <div className="text-slate-500 text-sm">No recent activity.</div>
+                ) : (
+                  activities.map(activity => (
+                    <ActivityItem 
+                      key={activity.id}
+                      title={activity.title} 
+                      time={activity.time} 
+                      desc={activity.desc} 
+                    />
+                  ))
+                )}
               </div>
             </Card>
 
