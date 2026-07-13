@@ -7,6 +7,19 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export const getAllCrops = () => api.get('/crops');
 export const getCropById = (id) => api.get(`/crops/${id}`);
 export const createCrop = (data) => api.post('/crops', data);

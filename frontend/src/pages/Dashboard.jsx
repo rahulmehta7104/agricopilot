@@ -1,24 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Cloud, Sprout, BarChart3, Bot, MapPin, Droplets, Sun, Wind, Bell, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Cloud, Sprout, BarChart3, Bot, MapPin, Droplets, Sun, Wind, Bell, ArrowUpRight, ArrowDownRight, Plus } from 'lucide-react';
 import { Card, Button } from '../components/ui';
 import { getDashboardData } from '../services/api';
+import FarmSetup from '../components/FarmSetup';
+import AddCropModal from '../components/AddCropModal';
 
 export default function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [needsSetup, setNeedsSetup] = useState(false);
+  const [isAddCropModalOpen, setIsAddCropModalOpen] = useState(false);
+
+  const fetchDashboard = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await getDashboardData();
+      setDashboard(response.data.data);
+      setNeedsSetup(false);
+      setLoading(false);
+    } catch (err) {
+      if (err.response?.status === 404 && err.response?.data?.message?.includes('farm profile')) {
+        setNeedsSetup(true);
+      } else {
+        setError('Failed to load dashboard data. Please try again.');
+      }
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const response = await getDashboardData();
-        setDashboard(response.data.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load dashboard data. Please try again.');
-        setLoading(false);
-      }
-    };
     fetchDashboard();
   }, []);
 
@@ -33,18 +45,22 @@ export default function Dashboard() {
     );
   }
 
+  if (needsSetup) {
+    return <FarmSetup onComplete={fetchDashboard} />;
+  }
+
   if (error || !dashboard) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
         <div className="text-center p-8 bg-red-50 dark:bg-red-500/10 rounded-2xl border border-red-200 dark:border-red-500/20 max-w-md w-full">
           <p className="text-red-600 dark:text-red-400 font-medium mb-4">{error || "Failed to parse data"}</p>
-          <Button onClick={() => window.location.reload()}>Retry Connection</Button>
+          <Button onClick={fetchDashboard}>Retry Connection</Button>
         </div>
       </div>
     );
   }
 
-  const { farmName, stats, weather, crops, insights, activities } = dashboard;
+  const { farmId, farmName, stats, weather, crops, insights, activities } = dashboard;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 relative overflow-hidden p-4 md:p-8 transition-colors duration-300">
@@ -176,11 +192,18 @@ export default function Dashboard() {
             <Card className="p-8 border-slate-200 dark:border-slate-800">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">Active Crop Sectors</h2>
-                <Button variant="outline" size="sm">View All</Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setIsAddCropModalOpen(true)} className="flex items-center gap-1 text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800/50 dark:text-emerald-400 dark:hover:bg-emerald-500/10">
+                    <Plus className="w-4 h-4" /> Add Crop
+                  </Button>
+                </div>
               </div>
               <div className="space-y-3">
                 {crops.length === 0 ? (
-                  <div className="text-center py-4 text-slate-500 text-sm">No crops found.</div>
+                  <div className="text-center py-8 text-slate-500 text-sm">
+                    <Sprout className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                    <p>No crops found in this farm.</p>
+                  </div>
                 ) : (
                   crops.map((crop) => (
                     <CropRow 
@@ -253,6 +276,13 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      <AddCropModal 
+        isOpen={isAddCropModalOpen} 
+        onClose={() => setIsAddCropModalOpen(false)} 
+        farmId={farmId}
+        onCropAdded={fetchDashboard}
+      />
     </div>
   );
 }

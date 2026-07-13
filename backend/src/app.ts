@@ -16,6 +16,9 @@ app.use(cors({
   credentials: true,
 }));
 
+import passport from './config/passport';
+app.use(passport.initialize());
+
 // Body Parsing Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

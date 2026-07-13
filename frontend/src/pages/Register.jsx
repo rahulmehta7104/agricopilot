@@ -1,34 +1,32 @@
 import { useState, useEffect } from 'react';
 import { Leaf } from 'lucide-react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
-export default function Login() {
+export default function Register() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login, user } = useAuth();
+  const { register, user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
     if (user) {
-      navigate(from, { replace: true });
+      navigate('/dashboard', { replace: true });
     }
-  }, [user, navigate, from]);
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await login(email, password);
-      toast.success('Successfully logged in!');
-      navigate(from, { replace: true });
+      await register(name, email, password);
+      toast.success('Registration successful! Please login.');
+      navigate('/login');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to login');
+      toast.error(error.response?.data?.message || 'Failed to register');
     } finally {
       setIsLoading(false);
     }
@@ -42,8 +40,8 @@ export default function Login() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-50 relative overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-emerald-200/40 blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-green-200/30 blur-[120px]" />
+        <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-emerald-200/40 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-green-200/30 blur-[120px]" />
       </div>
 
       <div className="max-w-md w-full relative z-10">
@@ -54,14 +52,32 @@ export default function Login() {
             <div className="mx-auto h-16 w-16 bg-gradient-to-br from-emerald-100 to-emerald-50 border border-emerald-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
               <Leaf className="h-8 w-8 text-emerald-600" />
             </div>
-            <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Welcome back</h2>
+            <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Create Account</h2>
             <p className="mt-3 text-base text-slate-500 font-medium">
-              Sign in to your AgriCopilot account
+              Join AgriCopilot today
             </p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-5">
+              <div>
+                <label htmlFor="name" className="block text-sm font-bold text-slate-700 mb-2">
+                  Full Name
+                </label>
+                <div>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="John Doe"
+                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label htmlFor="email" className="block text-sm font-bold text-slate-700 mb-2">
                   Email address
@@ -90,7 +106,7 @@ export default function Login() {
                     id="password"
                     name="password"
                     type="password"
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -101,33 +117,13 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-slate-300 rounded cursor-pointer"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm font-semibold text-slate-600 cursor-pointer">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-bold text-emerald-600 hover:text-emerald-500 transition-colors">
-                  Forgot password?
-                </a>
-              </div>
-            </div>
-
             <div className="pt-2">
               <button
                 type="submit"
                 disabled={isLoading}
                 className="w-full flex justify-center py-4 px-4 border border-transparent rounded-2xl shadow-[0_8px_20px_rgba(16,185,129,0.2)] text-base font-bold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'Signing in...' : 'Sign in'}
+                {isLoading ? 'Creating account...' : 'Sign up'}
               </button>
             </div>
             
@@ -152,16 +148,16 @@ export default function Login() {
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
-                Sign in with Google
+                Sign up with Google
               </button>
             </div>
           </form>
           
           <div className="mt-8 text-center">
             <p className="text-sm text-slate-500 font-medium">
-              Don't have an account?{' '}
-              <Link to="/register" className="font-bold text-emerald-600 hover:text-emerald-500 cursor-pointer">
-                Sign up
+              Already have an account?{' '}
+              <Link to="/login" className="font-bold text-emerald-600 hover:text-emerald-500 cursor-pointer">
+                Sign in
               </Link>
             </p>
           </div>

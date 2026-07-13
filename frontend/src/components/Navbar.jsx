@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Leaf } from 'lucide-react';
+import { Menu, X, Leaf, LogOut } from 'lucide-react';
 import { ThemeToggle } from './ui';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   // Add subtle shadow when scrolling
   useEffect(() => {
@@ -74,12 +76,27 @@ export default function Navbar() {
           {/* Right side - Theme Toggle & Premium Login Button */}
           <div className="hidden md:flex items-center gap-4">
             <ThemeToggle />
-            <Link
-              to="/login"
-              className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold rounded-full text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all duration-300 transform hover:scale-105"
-            >
-              Login
-            </Link>
+            {user ? (
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                  {user.name || user.email || 'Logged In'}
+                </span>
+                <button
+                  onClick={logout}
+                  className="inline-flex items-center justify-center p-2 text-sm font-bold rounded-full text-slate-600 bg-slate-100 hover:bg-slate-200 dark:text-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 transition-all duration-300"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold rounded-full text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all duration-300 transform hover:scale-105"
+              >
+                Login
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button and Theme Toggle */}
@@ -120,13 +137,26 @@ export default function Navbar() {
             );
           })}
           <div className="pt-4 px-2">
-            <Link
-              to="/login"
-              onClick={() => setIsOpen(false)}
-              className="block w-full text-center px-6 py-3.5 text-base font-bold rounded-full text-white bg-gradient-to-r from-emerald-500 to-teal-600 shadow-[0_4px_15px_rgba(16,185,129,0.3)]"
-            >
-              Login
-            </Link>
+            {user ? (
+              <button
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-bold rounded-full text-slate-700 bg-slate-100 dark:bg-slate-800 dark:text-slate-300"
+              >
+                <LogOut className="w-5 h-5" />
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setIsOpen(false)}
+                className="block w-full text-center px-6 py-3.5 text-base font-bold rounded-full text-white bg-gradient-to-r from-emerald-500 to-teal-600 shadow-[0_4px_15px_rgba(16,185,129,0.3)]"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -4,8 +4,19 @@ import { RecommendationStatus } from '@prisma/client';
 
 export const getDashboardData = async (req: Request, res: Response): Promise<void> => {
   try {
-    // For now, since there's no auth, grab the first farm in the database
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      res.status(401).json({ status: 'error', message: 'Unauthorized' });
+      return;
+    }
+
+    // Grab the first farm belonging to this user
     const farm = await prisma.farm.findFirst({
+      where: {
+        profile: {
+          userId: userId
+        }
+      },
       include: {
         profile: true,
         crops: {
@@ -21,7 +32,7 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
     });
 
     if (!farm) {
-      res.status(404).json({ status: 'error', message: 'No farm data found. Please seed the database.' });
+      res.status(404).json({ status: 'error', message: 'No farm data found for your account. Please create a farm profile.' });
       return;
     }
 
@@ -74,6 +85,7 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
 
     // Assemble the complete payload
     const payload = {
+      farmId: farm.id,
       farmName: `${farm.name}, ${farm.profile.fullName}`,
       stats: {
         weatherScore: { value: '85/100', trend: '+2.4%', trendUp: true },
