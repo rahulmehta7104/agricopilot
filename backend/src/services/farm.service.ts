@@ -18,11 +18,17 @@ export class FarmService {
       throw new Error('Farm size must be greater than zero');
     }
     
-    // Check if user already has a profile
-    const existingProfile = await this.farmRepo.findByProfileId(userId); // wait, farmRepo.findByProfileId returns farms, not the profile itself.
-    
     // We should use prisma directly for the transaction to ensure atomicity
     const { prisma } = require('../lib/prisma');
+    
+    // Check if user already has a profile
+    const existingProfile = await prisma.farmerProfile.findUnique({
+      where: { userId }
+    });
+
+    if (existingProfile) {
+      throw new Error('You have already set up a farm profile for this account.');
+    }
     
     return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Create FarmerProfile
