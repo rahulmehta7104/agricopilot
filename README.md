@@ -102,6 +102,7 @@ AgriCopilot/
 ✅ Week 3 Completed
 ✅ Week 4 Completed
 ✅ Week 5 Completed
+✅ Week 6 Completed
 
 ### Completed Work
 
@@ -178,6 +179,19 @@ AgriCopilot/
 * Unified Dashboard composite endpoint
 * Database seeding with master catalog data
 * Full modular routing for Users, Farms, Recommendations, and AI Chat
+
+#### Week 6
+
+**Authentication & Security**
+* Implemented Authentication using JWT and Passport (Google OAuth)
+* Added secure password hashing (bcryptjs) and validation (Zod)
+* Developed Backend Authentication Routes (`/register`, `/login`, `/google`)
+* Implemented Rate Limiting (express-rate-limit) to prevent brute-force attacks
+* Added Authentication State context to Frontend (AuthContext, ProtectedRoute)
+* Created seamless Google OAuth redirect flow and UX improvements
+* Built interactive `FarmSetup` onboarding flow for newly registered users
+* Added dynamic user-scoped "Add Crop" functionality to the Dashboard
+* Implemented automatic Dashboard navigation for authenticated users
 
 ### Current Application Pages
 
@@ -264,14 +278,14 @@ These components are designed to promote consistency, maintainability, and scala
 
 ### Next Milestone
 
-Week 6: Authentication & Security
+Week 7: AI Integration
 
 Upcoming Focus:
 
-* JWT Authentication
-* Route protection
-* User sessions
-* Password hashing
+* Connect Gemini API / LangChain
+* Build conversational AI copilot
+* Implement agricultural knowledge RAG system
+* Test AI recommendation response speed
 
 ## Internship Progress
 
@@ -282,7 +296,7 @@ Upcoming Focus:
 | Week 3 | UI/UX & Component Design | ✅ Completed |
 | Week 4 | Backend & API Development | ✅ Completed |
 | Week 5 | Database Design & Management | ✅ Completed |
-| Week 6 | Authentication & Security | ⏳ Pending |
+| Week 6 | Authentication & Security | ✅ Completed |
 | Week 7 | AI Integration | ⏳ Pending |
 | Week 8 | Frontend Integration & Polish | ⏳ Pending |
 | Week 9 | Deployment | ⏳ Pending |
