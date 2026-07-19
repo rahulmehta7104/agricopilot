@@ -103,6 +103,7 @@ AgriCopilot/
 ✅ Week 4 Completed
 ✅ Week 5 Completed
 ✅ Week 6 Completed
+✅ Week 7 Completed
 
 ### Completed Work
 
@@ -193,6 +194,16 @@ AgriCopilot/
 * Added dynamic user-scoped "Add Crop" functionality to the Dashboard
 * Implemented automatic Dashboard navigation for authenticated users
 
+#### Week 7
+
+**AI Integration**
+* Integrated Google Gemini AI (`gemini-3.5-flash`) via the `@google/genai` SDK
+* Created an interactive `AiChatModal` component for a seamless Copilot experience
+* Implemented backend chat service to handle context history and system instructions
+* Added dynamic loading and error states to the UI
+* Configured environment variables for secure API key management
+* Documented prompt engineering and tested 3 variations in `PROMPTS.md`
+
 ### Current Application Pages
 
 * Home
@@ -278,14 +289,14 @@ These components are designed to promote consistency, maintainability, and scala
 
 ### Next Milestone
 
-Week 7: AI Integration
+Week 8: Frontend Integration & Polish
 
 Upcoming Focus:
 
-* Connect Gemini API / LangChain
-* Build conversational AI copilot
-* Implement agricultural knowledge RAG system
-* Test AI recommendation response speed
+* Connect remaining backend APIs to frontend
+* Polish UI components
+* Implement advanced state management
+* Add empty states and animations
 
 ## Internship Progress
 
@@ -297,7 +308,7 @@ Upcoming Focus:
 | Week 4 | Backend & API Development | ✅ Completed |
 | Week 5 | Database Design & Management | ✅ Completed |
 | Week 6 | Authentication & Security | ✅ Completed |
-| Week 7 | AI Integration | ⏳ Pending |
+| Week 7 | AI Integration | ✅ Completed |
 | Week 8 | Frontend Integration & Polish | ⏳ Pending |
 | Week 9 | Deployment | ⏳ Pending |
 | Week 10 | Documentation & Portfolio | ⏳ Pending |
