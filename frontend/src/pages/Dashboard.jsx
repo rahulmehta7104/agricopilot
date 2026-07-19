@@ -4,6 +4,7 @@ import { Card, Button } from '../components/ui';
 import { getDashboardData } from '../services/api';
 import FarmSetup from '../components/FarmSetup';
 import AddCropModal from '../components/AddCropModal';
+import AiChatModal from '../components/AiChatModal';
 
 export default function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
@@ -11,6 +12,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [needsSetup, setNeedsSetup] = useState(false);
   const [isAddCropModalOpen, setIsAddCropModalOpen] = useState(false);
+  const [isAiChatModalOpen, setIsAiChatModalOpen] = useState(false);
 
   const fetchDashboard = async () => {
     try {
@@ -248,7 +250,10 @@ export default function Dashboard() {
                   )}
                 </div>
                 
-                <Button className="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-white border-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                <Button 
+                  onClick={() => setIsAiChatModalOpen(true)}
+                  className="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-white border-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                >
                   Chat with Copilot
                 </Button>
               </div>
@@ -282,6 +287,11 @@ export default function Dashboard() {
         onClose={() => setIsAddCropModalOpen(false)} 
         farmId={farmId}
         onCropAdded={fetchDashboard}
+      />
+
+      <AiChatModal 
+        isOpen={isAiChatModalOpen} 
+        onClose={() => setIsAiChatModalOpen(false)} 
       />
     </div>
   );

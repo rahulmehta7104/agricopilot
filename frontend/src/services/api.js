@@ -28,4 +28,9 @@ export const deleteCrop = (id) => api.delete(`/crops/${id}`);
 export const searchCrops = (query) => api.get(`/crops/search?q=${query}`);
 export const getDashboardData = () => api.get('/dashboard');
 
+// AI Chat APIs
+export const startChatSession = (data) => api.post('/chat/sessions', data);
+export const getUserChatSessions = (userId) => api.get(`/chat/users/${userId}/sessions`);
+export const sendChatMessage = (sessionId, data) => api.post(`/chat/sessions/${sessionId}/messages`, data);
+
 export default api;
