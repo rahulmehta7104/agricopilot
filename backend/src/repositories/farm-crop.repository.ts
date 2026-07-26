@@ -17,4 +17,8 @@ export class FarmCropRepository {
   async update(id: string, data: Prisma.FarmCropUpdateInput): Promise<FarmCrop> {
     return prisma.farmCrop.update({ where: { id }, data });
   }
+
+  async delete(id: string): Promise<FarmCrop> {
+    return prisma.farmCrop.delete({ where: { id } });
+  }
 }

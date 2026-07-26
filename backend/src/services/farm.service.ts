@@ -69,4 +69,8 @@ export class FarmService {
     }
     return this.cropRepo.create(data);
   }
+
+  async deleteFarmCrop(id: string) {
+    return this.cropRepo.delete(id);
+  }
 }

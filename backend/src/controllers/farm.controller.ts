@@ -51,3 +51,12 @@ export const addCropToFarm = async (req: Request, res: Response): Promise<void> 
     res.status(400).json({ status: 'error', message: error.message });
   }
 };
+
+export const deleteFarmCrop = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const crop = await farmService.deleteFarmCrop(req.params.farmCropId as string);
+    res.status(200).json({ status: 'success', data: crop });
+  } catch (error: any) {
+    res.status(400).json({ status: 'error', message: error.message });
+  }
+};
