@@ -64,17 +64,54 @@ export default function AiChatModal({ isOpen, onClose }) {
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setLoading(true);
 
+    // Add a placeholder for the assistant's streaming response
+    setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
     try {
-      const res = await sendChatMessage(sessionId, { content: userMessage });
-      const { aiMsg } = res.data.data;
-      setMessages(prev => [...prev, { role: 'assistant', content: aiMsg.content }]);
+      const response = await fetch(`http://localhost:3000/api/chat/sessions/${sessionId}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ content: userMessage })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to connect to AI service');
+      }
+
+      setLoading(false); // Stop loading indicator once stream starts
+      
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let done = false;
+      let streamedText = '';
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        
+        if (value) {
+          const chunk = decoder.decode(value, { stream: true });
+          streamedText += chunk;
+          
+          setMessages(prev => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1].content = streamedText;
+            return newMessages;
+          });
+        }
+      }
     } catch (error) {
+      setLoading(false);
       toast.error("Failed to send message. Please try again.");
       console.error("Chat error:", error);
-      // Remove the user message if it failed, or show an error message
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error connecting to the AI API.' }]);
-    } finally {
-      setLoading(false);
+      setMessages(prev => {
+        const newMessages = [...prev];
+        newMessages[newMessages.length - 1].content = 'Sorry, I encountered an error connecting to the AI API.';
+        return newMessages;
+      });
     }
   };
 
