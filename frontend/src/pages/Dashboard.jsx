@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Cloud, Sprout, BarChart3, Bot, MapPin, Droplets, Sun, Wind, Bell, ArrowUpRight, ArrowDownRight, Plus } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Cloud, Sprout, BarChart3, Bot, MapPin, Droplets, Sun, Wind, Bell, ArrowUpRight, ArrowDownRight, Plus, Trash2 } from 'lucide-react';
 import { Card, Button } from '../components/ui';
-import { getDashboardData } from '../services/api';
+import { getDashboardData, deleteFarmCrop } from '../services/api';
+import toast from 'react-hot-toast';
 import FarmSetup from '../components/FarmSetup';
 import AddCropModal from '../components/AddCropModal';
 import AiChatModal from '../components/AiChatModal';
@@ -14,7 +15,7 @@ export default function Dashboard() {
   const [isAddCropModalOpen, setIsAddCropModalOpen] = useState(false);
   const [isAiChatModalOpen, setIsAiChatModalOpen] = useState(false);
 
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -30,11 +31,44 @@ export default function Dashboard() {
       }
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchDashboard();
-  }, []);
+  }, [fetchDashboard]);
+
+  const handleDeleteCrop = useCallback(async (cropId) => {
+    try {
+      await deleteFarmCrop(cropId);
+      toast.success('Crop deleted successfully');
+      fetchDashboard();
+    } catch (err) {
+      toast.error('Failed to delete crop');
+    }
+  }, [fetchDashboard]);
+
+  const crops = dashboard?.crops || [];
+
+  const renderedCrops = useMemo(() => {
+    if (!crops || crops.length === 0) {
+      return (
+        <div className="text-center py-8 text-slate-500 text-sm">
+          <Sprout className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+          <p>No crops found in this farm.</p>
+        </div>
+      );
+    }
+    return crops.map((crop) => (
+      <CropRow 
+        key={crop.id} 
+        id={crop.id}
+        name={crop.cropName} 
+        area={`${crop.season} • ${crop.soilType}`} 
+        health={crop.health} 
+        onDelete={handleDeleteCrop}
+      />
+    ));
+  }, [crops, handleDeleteCrop]);
 
   if (loading) {
     return (
@@ -62,7 +96,7 @@ export default function Dashboard() {
     );
   }
 
-  const { farmId, farmName, stats, weather, crops, insights, activities } = dashboard;
+  const { farmId, farmName, stats, weather, insights, activities } = dashboard;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 relative overflow-hidden p-4 md:p-8 transition-colors duration-300">
@@ -201,21 +235,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="space-y-3">
-                {crops.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500 text-sm">
-                    <Sprout className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-                    <p>No crops found in this farm.</p>
-                  </div>
-                ) : (
-                  crops.map((crop) => (
-                    <CropRow 
-                      key={crop.id} 
-                      name={crop.cropName} 
-                      area={`${crop.season} • ${crop.soilType}`} 
-                      health={crop.health} 
-                    />
-                  ))
-                )}
+                {renderedCrops}
               </div>
             </Card>
 
@@ -317,7 +337,17 @@ function StatCard({ title, value, trend, trendUp, icon: Icon, color, bg }) {
   );
 }
 
-function CropRow({ name, area, health }) {
+function CropRow({ id, name, area, health, onDelete }) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+      setIsDeleting(true);
+      await onDelete(id);
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100/50 dark:border-slate-800/60 dark:bg-slate-800/30 dark:hover:bg-slate-800/50 transition-colors">
       <div className="flex items-center gap-4">
@@ -329,14 +359,24 @@ function CropRow({ name, area, health }) {
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{area}</p>
         </div>
       </div>
-      <div className="text-right w-24">
-        <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-          <span>Health</span>
-          <span>{health}%</span>
+      <div className="flex items-center gap-4 text-right">
+        <div className="w-24">
+          <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+            <span>Health</span>
+            <span>{health}%</span>
+          </div>
+          <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${health}%` }}></div>
+          </div>
         </div>
-        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-          <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${health}%` }}></div>
-        </div>
+        <button 
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+          title="Delete Crop"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );
