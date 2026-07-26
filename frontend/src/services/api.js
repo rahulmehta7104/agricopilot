@@ -28,6 +28,10 @@ export const deleteCrop = (id) => api.delete(`/crops/${id}`);
 export const searchCrops = (query) => api.get(`/crops/search?q=${query}`);
 export const getDashboardData = () => api.get('/dashboard');
 
+// Farm APIs
+export const deleteFarmCrop = (farmCropId) => api.delete(`/farms/crops/${farmCropId}`);
+export const updateFarmCrop = (farmCropId, data) => api.put(`/farms/crops/${farmCropId}`, data);
+
 // AI Chat APIs
 export const startChatSession = (data) => api.post('/chat/sessions', data);
 export const getUserChatSessions = (userId) => api.get(`/chat/users/${userId}/sessions`);
