@@ -77,9 +77,7 @@ export default function AiChatModal({ isOpen, onClose }) {
         body: JSON.stringify({ content: userMessage })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to connect to AI service');
-      }
+      if (!response.ok) throw new Error('Failed to connect to AI service');
 
       setLoading(false); // Stop loading indicator once stream starts
       
@@ -94,13 +92,29 @@ export default function AiChatModal({ isOpen, onClose }) {
         
         if (value) {
           const chunk = decoder.decode(value, { stream: true });
-          streamedText += chunk;
-          
-          setMessages(prev => {
-            const newMessages = [...prev];
-            newMessages[newMessages.length - 1].content = streamedText;
-            return newMessages;
-          });
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const dataStr = line.substring(6).trim();
+              if (dataStr === '[DONE]') {
+                done = true;
+                break;
+              }
+              try {
+                const dataObj = JSON.parse(dataStr);
+                if (dataObj.text) {
+                  streamedText += dataObj.text;
+                  setMessages(prev => {
+                    const newMessages = [...prev];
+                    newMessages[newMessages.length - 1].content = streamedText;
+                    return newMessages;
+                  });
+                }
+              } catch (e) {
+                // Ignore incomplete JSON chunks from split stream edge cases
+              }
+            }
+          }
         }
       }
     } catch (error) {
