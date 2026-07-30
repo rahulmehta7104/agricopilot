@@ -4,7 +4,8 @@
   "description": "Backend for AgriCopilot – Multi-Agent AI Platform",
   "main": "src/server.js",
   "scripts": {
-    "start": "ts-node src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc",
     "dev": "nodemon --watch src --ext ts --exec ts-node src/server.ts"
   },
   "dependencies": {
