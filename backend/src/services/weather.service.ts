@@ -10,11 +10,11 @@ export class WeatherService {
    * Fetches current weather and basic forecast for a given latitude and longitude.
    */
   public async getWeather(lat: number, lon: number): Promise<any> {
-    if (!this.apiKey) {
-      throw new Error('OpenWeather API key is not configured.');
-    }
-
     try {
+      if (!this.apiKey) {
+        throw new Error('OpenWeather API key is not configured.');
+      }
+
       // Using native fetch available in newer Node.js versions
       const response = await fetch(`${this.baseUrl}/weather?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=metric`);
       

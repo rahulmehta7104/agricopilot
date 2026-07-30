@@ -95,6 +95,7 @@ model Farm {
   latitude        Float?
   longitude       Float?
   location        String?
+  soilType        String?  @default("Loamy")
 
   createdAt       DateTime @default(now()) @db.Timestamptz
   updatedAt       DateTime @updatedAt @db.Timestamptz

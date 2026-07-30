@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Cloud, Sprout, BarChart3, Bot, MapPin, Bell, ArrowUpRight, ArrowDownRight, Plus, Trash2, LayoutDashboard, LineChart, Landmark } from 'lucide-react';
+import { Cloud, Sprout, BarChart3, Bot, MapPin, Bell, ArrowUpRight, ArrowDownRight, Plus, Trash2, LayoutDashboard, LineChart, Landmark, Sparkles } from 'lucide-react';
 import { Button } from '../components/ui';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getDashboardData, deleteFarmCrop } from '../services/api';
@@ -10,9 +10,11 @@ import AiChatModal from '../components/AiChatModal';
 import WeatherWidget from '../components/widgets/WeatherWidget';
 import MarketTrendWidget from '../components/widgets/MarketTrendWidget';
 import SchemesCarousel from '../components/widgets/SchemesCarousel';
+import CropRecommendationWidget from '../components/widgets/CropRecommendationWidget';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard, bg: '/indian_farm_dashboard_1785433655292.png' },
+  { id: 'recommendations', label: 'AI Crop Planner', icon: Sparkles, bg: '/farm_bg.png' },
   { id: 'market', label: 'Market & Weather', icon: LineChart, bg: '/indian_farm_about_1785433644542.png' },
   { id: 'schemes', label: 'Subsidies & Schemes', icon: Landmark, bg: '/indian_farm_home_1785433633952.png' },
 ];
@@ -298,6 +300,15 @@ export default function Dashboard() {
                 <MarketTrendWidget 
                   crops={dashboard.crops?.length > 0 ? dashboard.crops.map(c => c.cropName) : ['Wheat']} 
                   location={dashboard.location?.name || 'Punjab, India'} 
+                />
+              </div>
+            )}
+
+            {activeTab === 'recommendations' && (
+              <div className="max-w-5xl mx-auto h-full min-h-[60vh]">
+                <CropRecommendationWidget 
+                  location={dashboard.location?.name || 'India'} 
+                  initialSoilType={dashboard.soilType || 'Loamy'} 
                 />
               </div>
             )}

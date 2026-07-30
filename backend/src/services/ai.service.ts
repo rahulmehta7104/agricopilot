@@ -133,6 +133,67 @@ ${schemeContext}`;
       ]);
     }
   }
+
+  /**
+   * Recommends crops based on farm data.
+   */
+  public async getCropRecommendation(location: string, soilType: string, season: string): Promise<string> {
+    try {
+      const prompt = `You are an expert agronomist and agricultural planner.
+Given the following farm details, suggest the top 3 best crops to plant for maximum yield and profitability.
+You MUST output your response strictly as a JSON array of objects matching this exact structure, with no markdown formatting or extra text:
+[
+  {
+    "name": "Crop Name",
+    "confidence": "e.g. 92%",
+    "expectedYield": "e.g. 25-30 qtl/acre",
+    "reason": "Short explanation of why this crop is suitable.",
+    "marketDemand": "HIGH" or "MEDIUM" or "LOW"
+  }
+]
+
+Farm Details:
+- Location: ${location}
+- Soil Type: ${soilType}
+- Upcoming Season: ${season}`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json'
+        }
+      });
+
+      return response.text || '';
+    } catch (error: any) {
+      console.error('Crop recommendation error, falling back to mock data:', error.message);
+      
+      return JSON.stringify([
+        {
+          name: season.toLowerCase() === 'kharif' ? "Rice" : "Wheat",
+          confidence: "90%",
+          expectedYield: "20-25 qtl/acre",
+          reason: `Ideal for ${soilType} soil in ${location} during the ${season} season based on historical mock data.`,
+          marketDemand: "HIGH"
+        },
+        {
+          name: season.toLowerCase() === 'kharif' ? "Cotton" : "Mustard",
+          confidence: "85%",
+          expectedYield: "10-15 qtl/acre",
+          reason: `Good cash crop alternative suited for ${soilType} soil.`,
+          marketDemand: "HIGH"
+        },
+        {
+          name: "Maize",
+          confidence: "78%",
+          expectedYield: "18-22 qtl/acre",
+          reason: `Drought resistant option for ${season} season.`,
+          marketDemand: "MEDIUM"
+        }
+      ]);
+    }
+  }
 }
 
 export const aiService = new AIService();

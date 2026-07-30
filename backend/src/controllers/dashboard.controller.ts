@@ -100,6 +100,7 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
         longitude: farm.longitude || 77.2090,
         name: farm.location || 'New Delhi, India'
       },
+      soilType: farm.soilType || 'Loamy',
       stats: {
         weatherScore: { value: '88/100', trend: 'Optimal', trendUp: true }, // Ideally fetched real-time
         cropHealth: { value: `${avgHealth}%`, trend: 'Stable', trendUp: true },
