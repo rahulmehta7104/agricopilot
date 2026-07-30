@@ -73,7 +73,7 @@ export default function Register() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
-                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
                   />
                 </div>
               </div>
@@ -92,7 +92,7 @@ export default function Register() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="farmer@example.com"
-                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
                   />
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function Register() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
                   />
                 </div>
               </div>
