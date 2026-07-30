@@ -11,7 +11,7 @@ app.use(helmet());
 
 // CORS Configuration
 app.use(cors({
-  origin: '*', // In production, restrict this to your specific frontend URL
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   credentials: true,
 }));
