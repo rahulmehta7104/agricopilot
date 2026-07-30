@@ -4,7 +4,17 @@ import api from '../services/api';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('user');
+      if (!savedUser || savedUser === 'undefined') return null;
+      return JSON.parse(savedUser);
+    } catch (e) {
+      console.error('Failed to parse user from localStorage:', e);
+      localStorage.removeItem('user');
+      return null;
+    }
+  });
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
 
@@ -23,19 +33,9 @@ export const AuthProvider = ({ children }) => {
         setToken(urlToken);
       }, 0);
     }
+    
+    setLoading(false);
   }, []);
-
-  useEffect(() => {
-    if (token) {
-      // Decode token to get user info, or fetch from /api/users/me
-      // For now, we'll just set a dummy user object based on token presence
-      // In a real app, you might want to fetch the full profile here
-      setTimeout(() => setUser({ authenticated: true }), 0);
-    } else {
-      setTimeout(() => setUser(null), 0);
-    }
-    setTimeout(() => setLoading(false), 0);
-  }, [token]);
 
   const login = async (email, password) => {
     const response = await api.post('/auth/login', { email, password });
@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }) => {
     setToken(newToken);
     localStorage.setItem('token', newToken);
     setUser(data);
+    localStorage.setItem('user', JSON.stringify(data));
     return response.data;
   };
 
@@ -55,6 +56,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
   };
 
   return (

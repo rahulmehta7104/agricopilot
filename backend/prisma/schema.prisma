@@ -92,6 +92,9 @@ model Farm {
   name            String
   size            Decimal  @db.Decimal(10, 2)
   unit            Unit     @default(ACRES)
+  latitude        Float?
+  longitude       Float?
+  location        String?
 
   createdAt       DateTime @default(now()) @db.Timestamptz
   updatedAt       DateTime @updatedAt @db.Timestamptz
@@ -128,6 +131,7 @@ model FarmCrop {
   expectedHarvestDate DateTime?  @db.Timestamptz
   actualHarvestDate   DateTime?  @db.Timestamptz
   yieldEstimate       Decimal?   @db.Decimal(10, 2)
+  healthScore         Int?       @default(100)
 
   createdAt           DateTime   @default(now()) @db.Timestamptz
   updatedAt           DateTime   @updatedAt @db.Timestamptz

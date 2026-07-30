@@ -6,6 +6,7 @@ import aiChatRoutes from './ai-chat.routes';
 import cropRoutes from './crop.routes';
 import dashboardRoutes from './dashboard.routes';
 import authRoutes from './auth.routes';
+import aiServicesRoutes from './ai-services.routes';
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.use('/recommendations', recommendationRoutes);
 router.use('/chat', aiChatRoutes);
 router.use('/crops', cropRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/services', aiServicesRoutes);
 
 export default router;

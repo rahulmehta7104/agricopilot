@@ -1,217 +1,221 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Bot, User, Loader2, Trash2 } from 'lucide-react';
-import { Button } from './ui';
+import { X, Send, Bot, Loader2, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { startChatSession, sendChatMessage } from '../services/api';
 import toast from 'react-hot-toast';
-import { useAuth } from '../context/AuthContext';
 
 export default function AiChatModal({ isOpen, onClose }) {
-  const { token } = useAuth();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [sessionId, setSessionId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [chatSession, setChatSession] = useState(null);
   const messagesEndRef = useRef(null);
 
-  // Initialize session on open
-  useEffect(() => {
-    if (isOpen && !sessionId) {
-      const initSession = async () => {
-        try {
-          let userId = null;
-          if (token) {
-            try {
-              const payload = JSON.parse(atob(token.split('.')[1]));
-              userId = payload.id;
-            } catch(e){ console.error("Error decoding token"); }
-          }
-          
-          if (!userId) {
-             toast.error("User not authenticated.");
-             return;
-          }
+  // Animation Stages: 'hidden' | 'robot-intro' | 'robot-blast' | 'chat-active'
+  const [stage, setStage] = useState('hidden');
 
-          const res = await startChatSession({ userId, title: 'New Chat' });
-          setSessionId(res.data.data.id);
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (stage === 'chat-active') {
+      scrollToBottom();
+    }
+  }, [messages, stage]);
+
+  // Handle the intro and blast sequence
+  useEffect(() => {
+    let t1, t2;
+    if (isOpen) {
+      setStage('robot-intro');
+      // Stay happy robot for 1.2s
+      t1 = setTimeout(() => setStage('robot-blast'), 1200);
+      // Blast takes 0.4s, then show chat
+      t2 = setTimeout(() => setStage('chat-active'), 1600);
+    } else {
+      setStage('hidden');
+    }
+    return () => { 
+      if (t1) clearTimeout(t1); 
+      if (t2) clearTimeout(t2); 
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && !chatSession && messages.length === 0 && stage === 'chat-active') {
+      const initChat = async () => {
+        try {
+          setIsLoading(true);
+          const res = await startChatSession();
+          setChatSession(res.data.data.chatId || res.data.data.id);
           setMessages([
-            { role: 'assistant', content: 'Hello! I am AgriCopilot. How can I help you with your farm today?' }
+            { id: 1, role: 'model', text: res.data.data.message || "Hello! I am AgriCopilot. How can I help?" }
           ]);
         } catch (error) {
-          toast.error("Failed to start chat session.");
-          console.error("Session start error:", error);
+          console.warn("Backend chat init failed, falling back to mock mode.");
+          setChatSession('mock-session-id');
+          setMessages([
+            { id: 1, role: 'model', text: "Hello! I am AgriCopilot (Offline Mode). The live AI server is currently unreachable, but I'm still here to chat!" }
+          ]);
+        } finally {
+          setIsLoading(false);
         }
       };
-      initSession();
+      initChat();
     }
-  }, [isOpen, sessionId]);
-
-  useEffect(() => {
-    // Scroll to bottom when messages change
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const handleClear = () => {
-    setSessionId(null);
-    setMessages([]);
-  };
+  }, [isOpen, chatSession, messages.length, stage]);
 
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim() || !sessionId || loading) return;
+    if (!input.trim() || !chatSession) return;
 
-    const userMessage = input.trim();
+    const userText = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    setLoading(true);
+    const userMsg = { id: Date.now(), role: 'user', text: userText };
+    setMessages(prev => [...prev, userMsg]);
+    setIsLoading(true);
 
-    // Add a placeholder for the assistant's streaming response
-    setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+    if (chatSession === 'mock-session-id') {
+      setTimeout(() => {
+        const botMsg = { id: Date.now() + 1, role: 'model', text: "That is an excellent point! Since I am currently operating in mock-mode due to API limits, I recommend checking the Market & Weather tabs on your dashboard for the most up-to-date information on your crops." };
+        setMessages(prev => [...prev, botMsg]);
+        setIsLoading(false);
+      }, 1000);
+      return;
+    }
 
     try {
-      const response = await fetch(`http://localhost:3000/api/chat/sessions/${sessionId}/messages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ content: userMessage })
-      });
-
-      if (!response.ok) throw new Error('Failed to connect to AI service');
-
-      setLoading(false); // Stop loading indicator once stream starts
-      
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder('utf-8');
-      let done = false;
-      let streamedText = '';
-
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        
-        if (value) {
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\n');
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const dataStr = line.substring(6).trim();
-              if (dataStr === '[DONE]') {
-                done = true;
-                break;
-              }
-              try {
-                const dataObj = JSON.parse(dataStr);
-                if (dataObj.text) {
-                  streamedText += dataObj.text;
-                  setMessages(prev => {
-                    const newMessages = [...prev];
-                    newMessages[newMessages.length - 1].content = streamedText;
-                    return newMessages;
-                  });
-                }
-              } catch (e) {
-                // Ignore incomplete JSON chunks from split stream edge cases
-              }
-            }
-          }
-        }
-      }
+      const res = await sendChatMessage(chatSession, userText);
+      const botMsg = { id: Date.now() + 1, role: 'model', text: res.data.data.message };
+      setMessages(prev => [...prev, botMsg]);
     } catch (error) {
-      setLoading(false);
-      toast.error("Failed to send message. Please try again.");
-      console.error("Chat error:", error);
-      setMessages(prev => {
-        const newMessages = [...prev];
-        newMessages[newMessages.length - 1].content = 'Sorry, I encountered an error connecting to the AI API.';
-        return newMessages;
-      });
+      toast.error("Failed to send message");
+      const botMsg = { id: Date.now() + 1, role: 'model', text: "I'm having trouble connecting to my servers right now. Please try again later!" };
+      setMessages(prev => [...prev, botMsg]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (!isOpen) return null;
+  const clearChat = () => {
+    setMessages([]);
+    setChatSession(null);
+    onClose();
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-sm transition-opacity">
-      <div className="w-full max-w-md h-full bg-white dark:bg-slate-950 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-emerald-500 text-white">
-          <div className="flex items-center gap-2">
-            <Bot className="w-6 h-6" />
-            <h2 className="font-bold text-lg">AgriCopilot AI</h2>
-          </div>
-          <div className="flex items-center gap-1">
-            <button 
-              onClick={handleClear}
-              className="p-1.5 rounded-full hover:bg-white/20 transition-colors tooltip-trigger"
-              title="Clear Chat"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
-            <button 
-              onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-white/20 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed bottom-6 right-6 z-[100] flex items-end justify-end w-[400px] h-[600px] pointer-events-none">
+          
+          {/* Stage 1 & 2: The Robot Intro and Blast */}
+          <AnimatePresence>
+            {(stage === 'robot-intro' || stage === 'robot-blast') && (
+              <motion.div 
+                key="robot-animation"
+                initial={{ scale: 0, y: 100, opacity: 0 }}
+                animate={
+                  stage === 'robot-intro' 
+                    ? { scale: [0, 1.2, 1], y: 0, opacity: 1, rotate: [0, -10, 10, -5, 0] } // Happy pop-up with a wiggle
+                    : { scale: 3, opacity: 0, filter: "brightness(2) blur(10px)" } // The Blast!
+                }
+                transition={
+                  stage === 'robot-intro' 
+                    ? { duration: 0.8, type: "spring", bounce: 0.5 }
+                    : { duration: 0.4, ease: "easeOut" }
+                }
+                exit={{ opacity: 0, scale: 0 }}
+                className="absolute bottom-0 right-0 w-48 h-48 drop-shadow-[0_0_40px_rgba(16,185,129,0.8)] z-[120]"
+              >
+                <img src="/robot_avatar.png" alt="Happy Robot" className="w-full h-full object-contain" />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((msg, index) => (
-            <div 
-              key={index} 
-              className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
-            >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                msg.role === 'user' 
-                  ? 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300' 
-                  : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400'
-              }`}>
-                {msg.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
-              </div>
-              <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                msg.role === 'user' 
-                  ? 'bg-emerald-500 text-white' 
-                  : 'bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200'
-              }`}>
-                <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-              </div>
-            </div>
-          ))}
-          {loading && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400">
-                <Bot className="w-5 h-5" />
-              </div>
-              <div className="bg-slate-100 dark:bg-slate-900 rounded-2xl px-4 py-3 flex items-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-emerald-500" />
-                <span className="text-sm text-slate-500">Copilot is typing...</span>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+          {/* Stage 3: The Chat Box */}
+          <AnimatePresence>
+            {stage === 'chat-active' && (
+              <motion.div 
+                key="chatbox"
+                initial={{ opacity: 0, scale: 0.8, y: 50, filter: "brightness(2)" }}
+                animate={{ opacity: 1, scale: 1, y: 0, filter: "brightness(1)" }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                className="w-[350px] md:w-[400px] h-[550px] max-h-[75vh] bg-slate-900/95 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col rounded-[2rem] overflow-hidden border border-slate-700/50 pointer-events-auto relative z-[110]"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 border-b border-slate-700/50 bg-slate-800/50 text-white relative z-10">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <h2 className="font-bold text-lg tracking-tight">AgriCopilot AI</h2>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button onClick={clearChat} className="p-2 hover:bg-slate-700/50 rounded-full transition-colors text-slate-400 hover:text-white" title="Clear chat">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <button onClick={onClose} className="p-2 hover:bg-slate-700/50 rounded-full transition-colors text-slate-400 hover:text-white" title="Close">
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
 
-        {/* Input */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-          <form onSubmit={handleSend} className="flex gap-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask Copilot..."
-              disabled={loading}
-              className="flex-1 bg-slate-100 dark:bg-slate-900 border border-transparent focus:border-emerald-500 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-900 dark:text-white placeholder:text-slate-500"
-            />
-            <Button type="submit" disabled={!input.trim() || loading} className="shrink-0 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white px-4">
-              <Send className="w-4 h-4" />
-            </Button>
-          </form>
+                {/* Chat Area */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gradient-to-b from-slate-900/50 to-slate-900/80">
+                  {messages.map((msg) => (
+                    <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                      <div className={`max-w-[85%] p-3.5 rounded-2xl shadow-sm text-sm leading-relaxed ${
+                        msg.role === 'user' 
+                          ? 'bg-emerald-600 text-white rounded-tr-sm' 
+                          : 'bg-slate-800 border border-slate-700/50 text-slate-200 rounded-tl-sm'
+                      }`}>
+                        {msg.role === 'model' && (
+                          <div className="flex items-center gap-2 mb-1.5 opacity-80">
+                            <Bot className="w-3.5 h-3.5" /> <span className="text-xs font-semibold uppercase tracking-wider">Copilot</span>
+                          </div>
+                        )}
+                        <div className="whitespace-pre-line">{msg.text}</div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {isLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-slate-800 border border-slate-700/50 text-emerald-400 p-3.5 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="text-sm font-medium">Analyzing...</span>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input Area */}
+                <div className="p-4 bg-slate-800/80 border-t border-slate-700/50">
+                  <form onSubmit={handleSend} className="flex gap-2 relative z-20">
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="Ask about crops, weather, or market..."
+                      className="flex-1 bg-slate-900/50 border border-slate-600/50 text-white text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-slate-500 transition-all shadow-inner"
+                      disabled={isLoading}
+                    />
+                    <button
+                      type="submit"
+                      disabled={!input.trim() || isLoading}
+                      className="bg-emerald-500 text-white p-3 rounded-xl hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  </form>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }

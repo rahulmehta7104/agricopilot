@@ -42,15 +42,28 @@ export class AiChatService {
 
     const systemInstruction = "You are AgriCopilot, an expert agricultural AI assistant. Help the farmer with crop management, weather analysis, and general farming advice. Keep responses concise and practical.";
 
-    const responseStream = await ai.models.generateContentStream({
-      model: 'gemini-3.5-flash',
-      contents,
-      config: {
-        systemInstruction: systemInstruction,
-      }
-    });
-
-    return responseStream;
+    try {
+      const responseStream = await ai.models.generateContentStream({
+        model: 'gemini-3.5-flash',
+        contents,
+        config: {
+          systemInstruction: systemInstruction,
+        }
+      });
+      return responseStream;
+    } catch (error: any) {
+      console.error('AI Chat Stream error, falling back to mock response:', error.message);
+      // Return a fake async iterable that simulates a stream
+      return (async function* () {
+        const mockMessage = "I am currently operating in offline mock mode because the AI API is unreachable. Please check the dashboard for the latest updates on your crops, weather, and market trends.";
+        // Simulate a slight delay and stream the text
+        const words = mockMessage.split(' ');
+        for (const word of words) {
+          await new Promise(resolve => setTimeout(resolve, 50));
+          yield { text: word + ' ' };
+        }
+      })();
+    }
   }
 
   async saveAssistantMessage(sessionId: string, content: string, latencyMs: number) {

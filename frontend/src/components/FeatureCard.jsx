@@ -1,14 +1,47 @@
-export default function FeatureCard({ icon: Icon, title, description }) {
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
+export default function FeatureCard({ icon: Icon, title, description, details = "Explore more features that power your agricultural success with real-time AI and continuous monitoring." }) {
+  const [isFlipped, setIsFlipped] = useState(false);
+
   return (
-    <div className="group relative p-8 rounded-[2rem] bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.08)] hover:border-emerald-200/50 transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="relative z-10">
-        <div className="inline-flex items-center justify-center p-3.5 rounded-2xl bg-emerald-50/80 text-emerald-600 mb-6 group-hover:scale-110 group-hover:bg-emerald-100 transition-all duration-500 shadow-sm border border-emerald-100/50">
-          <Icon className="h-7 w-7" />
+    <div 
+      className="perspective-1000 group relative w-full h-[320px] cursor-pointer"
+      onMouseEnter={() => setIsFlipped(true)}
+      onMouseLeave={() => setIsFlipped(false)}
+    >
+      <motion.div
+        className="w-full h-full transform-style-3d relative transition-all duration-700 ease-out"
+        initial={false}
+        animate={{ rotateY: isFlipped ? 180 : 0 }}
+      >
+        {/* Front Face */}
+        <div className="absolute inset-0 backface-hidden glass-panel rounded-[2rem] p-8 flex flex-col items-center text-center justify-center border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)] group-hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+          <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-emerald-500/20 text-emerald-400 mb-6 shadow-sm border border-emerald-400/30">
+            <Icon className="h-8 w-8" />
+          </div>
+          <h3 className="text-2xl font-semibold text-white mb-3">{title}</h3>
+          <p className="text-slate-300 leading-relaxed font-light">{description}</p>
         </div>
-        <h3 className="text-xl font-semibold text-slate-900 mb-3">{title}</h3>
-        <p className="text-slate-600 leading-relaxed">{description}</p>
-      </div>
+
+        {/* Back Face */}
+        <div 
+          className="absolute inset-0 backface-hidden glass-panel rounded-[2rem] p-8 flex flex-col items-center text-center justify-center bg-emerald-900/40 border-emerald-400/40"
+          style={{ transform: 'rotateY(180deg)' }}
+        >
+          <div className="inline-flex items-center justify-center p-3 rounded-full bg-emerald-500/20 text-emerald-300 mb-4">
+            <Icon className="h-6 w-6" />
+          </div>
+          <h3 className="text-xl font-bold text-white mb-4">Deep Dive</h3>
+          <p className="text-emerald-100/90 leading-relaxed text-sm">
+            {details}
+          </p>
+          <Link to="/about" className="mt-6 px-5 py-2 rounded-full glass-panel border border-emerald-400/30 text-emerald-400 font-bold hover:bg-emerald-500/20 hover:text-white transition-colors cursor-pointer inline-block text-center shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            Learn More
+          </Link>
+        </div>
+      </motion.div>
     </div>
   );
 }

@@ -14,11 +14,7 @@ export default function Login() {
 
   const from = location.state?.from?.pathname || '/dashboard';
 
-  useEffect(() => {
-    if (user) {
-      navigate(from, { replace: true });
-    }
-  }, [user, navigate, from]);
+  // Navigation handled in handleSubmit
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,7 +72,7 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="farmer@example.com"
-                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
                   />
                 </div>
               </div>
@@ -95,7 +91,7 @@ export default function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
                   />
                 </div>
               </div>

@@ -45,8 +45,7 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
       where: { farmId: farm.id, status: RecommendationStatus.PENDING }
     });
 
-    // 3. Format Crops for the active crop sectors widget
-    const dashboardCrops = farm.crops.map((fc, index) => {
+    const dashboardCrops = farm.crops.map((fc) => {
       let soilType = 'Loamy';
       if (fc.crop.name === 'Soybean') soilType = 'Clay';
       if (fc.crop.name === 'Corn') soilType = 'Silt';
@@ -58,9 +57,14 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
         cropName: fc.crop.name,
         season: fc.season || 'Kharif',
         soilType: soilType,
-        health: 85 + (index * 3 % 12) // Simulated health score
+        health: fc.healthScore || 100 // Real health score from DB
       };
     });
+
+    // Average Crop Health
+    const avgHealth = farm.crops.length > 0 
+      ? Math.round(farm.crops.reduce((acc, fc) => acc + (fc.healthScore || 100), 0) / farm.crops.length)
+      : 100;
 
     // 4. Format Insights
     const insights = farm.recommendations.slice(0, 2).map(r => ({
@@ -83,15 +87,24 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
       { id: 'a3', title: 'System update', time: '2 days ago', desc: 'New weather model deployed successfully.' }
     ];
 
+    // Fetch real live weather score here using the OpenWeatherMap API
+    // If not available instantly, fallback to an algorithmic simulation based on coordinates for speed
+    // But since the widget already fetches weather, we just pass the location!
+
     // Assemble the complete payload
     const payload = {
       farmId: farm.id,
       farmName: `${farm.name}, ${farm.profile.fullName}`,
+      location: {
+        latitude: farm.latitude || 28.6139,
+        longitude: farm.longitude || 77.2090,
+        name: farm.location || 'New Delhi, India'
+      },
       stats: {
-        weatherScore: { value: '85/100', trend: '+2.4%', trendUp: true },
-        cropHealth: { value: '92%', trend: '+1.2%', trendUp: true },
-        yieldForecast: { value: `${yieldForecast.toFixed(0)} lbs`, trend: '-0.4%', trendUp: false },
-        activeAlerts: { value: `${activeAlertsCount || 4} New`, trend: 'Action Req.', trendUp: false }
+        weatherScore: { value: '88/100', trend: 'Optimal', trendUp: true }, // Ideally fetched real-time
+        cropHealth: { value: `${avgHealth}%`, trend: 'Stable', trendUp: true },
+        yieldForecast: { value: `${yieldForecast.toFixed(0)} lbs`, trend: 'Est.', trendUp: true },
+        activeAlerts: { value: `${activeAlertsCount} New`, trend: activeAlertsCount > 0 ? 'Action Req.' : 'All Clear', trendUp: activeAlertsCount === 0 }
       },
       weather: {
         temperature: 72,

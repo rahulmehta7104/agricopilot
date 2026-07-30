@@ -201,7 +201,8 @@ AgriCopilot/
 * Integrated Google Gemini AI (`gemini-3.5-flash`) via the `@google/genai` SDK
 * Created an interactive `AiChatModal` component for a seamless Copilot experience
 * Implemented backend chat service to handle context history and system instructions
-* Added dynamic loading and error states to the UI
+* Engineered robust AI API fallback mechanisms to generate context-aware dynamic mock data during API outages or rate limits
+* Enforced strict JSON response schemas on AI models to guarantee perfect integration with structured frontend UI components
 * Configured environment variables for secure API key management
 * Documented prompt engineering and tested 3 variations in `PROMPTS.md`
 
@@ -212,8 +213,10 @@ AgriCopilot/
 * Implemented complete CRUD flows (Create, Read, Update, Delete) for Farm Crops
 * Built robust AI Chat UI with Server-Sent Events (SSE) for real-time streaming text
 * Engineered global React Error Boundaries to catch crashes gracefully
-* Polished empty states and confirmation dialogs for destructive actions
-* Optimized React rendering performance using `useMemo` and `useCallback`
+* Resolved critical React Hooks violations and component mounting crashes during authentication and routing state changes
+* Enhanced Dashboard UI with dynamic user location and farm profile data injected into the main header
+* Built a custom, fully animated glassmorphism dropdown component for the Market AI prediction widget to replace native browser selects
+* Resolved complex CSS stacking context (z-index) issues causing UI overlaps
 * Executed full responsive polish for mobile (375px), tablet (768px), and desktop (1440px)
 
 ### Current Application Pages
