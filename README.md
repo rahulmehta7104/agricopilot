@@ -105,6 +105,7 @@ AgriCopilot/
 ✅ Week 6 Completed
 ✅ Week 7 Completed
 ✅ Week 8 Completed
+✅ Week 9 Completed
 
 ### Completed Work
 
@@ -219,6 +220,17 @@ AgriCopilot/
 * Resolved complex CSS stacking context (z-index) issues causing UI overlaps
 * Executed full responsive polish for mobile (375px), tablet (768px), and desktop (1440px)
 
+#### Week 9
+
+**Deployment & Documentation**
+* Deployed Frontend application globally using Vercel
+* Deployed Backend Node.js service using Render Web Services
+* Configured Production Environment Variables securely
+* Connected production backend to Supabase PostgreSQL connection pooler
+* Addressed Render memory limits by compiling TypeScript to JavaScript for production runs
+* Updated Google OAuth Authorized Redirect URIs for production domains
+* Integrated interactive Swagger API Documentation (`/docs`) into the backend codebase
+
 ### Current Application Pages
 
 * Home
@@ -304,14 +316,14 @@ These components are designed to promote consistency, maintainability, and scala
 
 ### Next Milestone
 
-Week 8: Frontend Integration & Polish
+Week 10: Documentation & Portfolio
 
 Upcoming Focus:
 
-* Connect remaining backend APIs to frontend
-* Polish UI components
-* Implement advanced state management
-* Add empty states and animations
+* Finalize project documentation
+* Create presentation slides and demo videos
+* Polish GitHub repository (architecture diagrams, README enhancements)
+* Final code review and cleanups
 
 ## Internship Progress
 
@@ -325,7 +337,7 @@ Upcoming Focus:
 | Week 6 | Authentication & Security | ✅ Completed |
 | Week 7 | AI Integration | ✅ Completed |
 | Week 8 | Frontend Integration & Polish | ✅ Completed |
-| Week 9 | Deployment | ⏳ Pending |
+| Week 9 | Deployment | ✅ Completed |
 | Week 10 | Documentation & Portfolio | ⏳ Pending |
 
 
@@ -395,6 +407,12 @@ npm run dev
 **Local URLs:**
 * Frontend URL: `http://localhost:5173`
 * Backend URL: `http://localhost:3000`
+* API Docs: `http://localhost:3000/docs`
+
+**Production URLs:**
+* Frontend: `https://agricopilot.vercel.app`
+* Backend API: `https://agricopilot-backend.onrender.com`
+* API Docs: `https://agricopilot-backend.onrender.com/docs`
 
 ### Dependencies
 
