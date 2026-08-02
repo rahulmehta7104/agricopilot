@@ -39,7 +39,7 @@ export default function MarketTrendWidget({ crops = ['Wheat'], location = 'Punja
       }
 
       try {
-        const res = await fetch(`http://localhost:3000/api/services/market-prediction?crop=${selectedCrop}&location=${location}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/services/market-prediction?crop=${selectedCrop}&location=${location}`);
         const data = await res.json();
         
         let parsedData;

@@ -18,7 +18,7 @@ export default function SchemesCarousel({ profile = 'Small farmer in India growi
       }
 
       try {
-        const res = await fetch(`http://localhost:3000/api/services/schemes?profile=${encodeURIComponent(profile)}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/services/schemes?profile=${encodeURIComponent(profile)}`);
         const data = await res.json();
         
         let parsedData;

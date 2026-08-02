@@ -21,7 +21,7 @@ export default function CropRecommendationWidget({ location = 'India', initialSo
     setRecommendations(null);
 
     try {
-      const res = await fetch(`http://localhost:3000/api/services/crop-recommendation?location=${location}&soilType=${soilType}&season=${season}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/services/crop-recommendation?location=${location}&soilType=${soilType}&season=${season}`);
       const data = await res.json();
       
       if (data.error) {

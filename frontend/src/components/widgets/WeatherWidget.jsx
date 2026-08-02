@@ -9,7 +9,7 @@ export default function WeatherWidget({ lat = 28.6139, lon = 77.2090, locationNa
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/services/weather?lat=${lat}&lon=${lon}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/services/weather?lat=${lat}&lon=${lon}`);
         const data = await res.json();
         setWeather(data);
       } catch (error) {
