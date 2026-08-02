@@ -88,7 +88,7 @@ export default function AiChatModal({ isOpen, onClose }) {
     }
 
     try {
-      const res = await sendChatMessage(chatSession, userText);
+      const res = await sendChatMessage(chatSession, { content: userText });
       const botMsg = { id: Date.now() + 1, role: 'model', text: res.data.data.message };
       setMessages(prev => [...prev, botMsg]);
     } catch (error) {
