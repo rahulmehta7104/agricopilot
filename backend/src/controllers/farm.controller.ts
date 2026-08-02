@@ -19,14 +19,14 @@ export const setupFarmProfile = async (req: Request, res: Response): Promise<voi
       res.status(401).json({ status: 'error', message: 'Unauthorized' });
       return;
     }
-    const { fullName, farmName, size } = req.body;
+    const { fullName, farmName, size, location, latitude, longitude } = req.body;
     
     if (!fullName || !farmName || size === undefined) {
       res.status(400).json({ status: 'error', message: 'Missing required fields' });
       return;
     }
     
-    const result = await farmService.setupFarmProfile(userId, fullName, farmName, Number(size));
+    const result = await farmService.setupFarmProfile(userId, fullName, farmName, Number(size), location, latitude, longitude);
     res.status(201).json({ status: 'success', data: result });
   } catch (error: any) {
     res.status(400).json({ status: 'error', message: error.message });

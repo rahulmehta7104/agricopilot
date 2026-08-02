@@ -13,7 +13,7 @@ export class FarmService {
     return this.farmRepo.create(data);
   }
 
-  async setupFarmProfile(userId: string, fullName: string, farmName: string, size: number) {
+  async setupFarmProfile(userId: string, fullName: string, farmName: string, size: number, location?: string, latitude?: number, longitude?: number) {
     if (size <= 0) {
       throw new Error('Farm size must be greater than zero');
     }
@@ -46,6 +46,9 @@ export class FarmService {
           profileId: profile.id,
           name: farmName,
           size: size,
+          location: location || null,
+          latitude: latitude || null,
+          longitude: longitude || null,
         }
       });
 

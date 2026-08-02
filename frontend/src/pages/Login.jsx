@@ -14,7 +14,12 @@ export default function Login() {
 
   const from = location.state?.from?.pathname || '/dashboard';
 
-  // Navigation handled in handleSubmit
+  // Auto-redirect if user gets populated from URL token in the background
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

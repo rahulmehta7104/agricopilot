@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sprout } from 'lucide-react';
+import { Sprout, MapPin, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../services/api';
 
@@ -7,7 +7,55 @@ export default function FarmSetup({ onComplete }) {
   const [fullName, setFullName] = useState('');
   const [farmName, setFarmName] = useState('');
   const [size, setSize] = useState('');
+  const [location, setLocation] = useState('');
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        setLatitude(lat);
+        setLongitude(lon);
+
+        try {
+          // Reverse geocoding using free Nominatim API
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
+          const data = await response.json();
+          
+          if (data && data.address) {
+            const city = data.address.city || data.address.town || data.address.village || data.address.county || '';
+            const state = data.address.state || '';
+            const locationStr = [city, state].filter(Boolean).join(', ');
+            setLocation(locationStr || data.display_name);
+            toast.success("Location found successfully!");
+          } else {
+            toast.success("Coordinates found, but address could not be resolved.");
+          }
+        } catch (error) {
+          console.error("Geocoding error:", error);
+          toast.error("Could not fetch city name, but coordinates are saved.");
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        toast.error("Failed to get location. Please ensure location permissions are granted.");
+        setIsLocating(false);
+      },
+      { timeout: 10000 }
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,6 +66,9 @@ export default function FarmSetup({ onComplete }) {
         fullName,
         farmName,
         size: Number(size),
+        location,
+        latitude,
+        longitude
       });
       
       toast.success('Farm profile created successfully!');
@@ -90,10 +141,40 @@ export default function FarmSetup({ onComplete }) {
             />
           </div>
 
+          <div>
+            <label htmlFor="location" className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+              Location
+            </label>
+            <div className="relative">
+              <input
+                id="location"
+                type="text"
+                required
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="e.g. Pune, Maharashtra"
+                className="appearance-none block w-full px-5 py-3.5 pr-14 bg-white/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm placeholder-slate-400 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
+              />
+              <button
+                type="button"
+                onClick={handleGetLocation}
+                disabled={isLocating}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-emerald-500 hover:text-emerald-600 transition-colors cursor-pointer"
+                title="Use Live Location"
+              >
+                {isLocating ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <MapPin className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+          </div>
+
           <div className="pt-2">
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isLocating}
               className="w-full flex justify-center py-4 px-4 border border-transparent rounded-2xl shadow-[0_8px_20px_rgba(16,185,129,0.2)] text-base font-bold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Creating Farm...' : 'Set Up Farm'}
