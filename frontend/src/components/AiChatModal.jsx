@@ -88,14 +88,59 @@ export default function AiChatModal({ isOpen, onClose }) {
     }
 
     try {
-      const res = await sendChatMessage(chatSession, { content: userText });
-      const botMsg = { id: Date.now() + 1, role: 'model', text: res.data.data.message };
-      setMessages(prev => [...prev, botMsg]);
+      const token = localStorage.getItem('token');
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      
+      const response = await fetch(`${apiUrl}/chat/sessions/${chatSession}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ content: userText })
+      });
+
+      if (!response.ok) throw new Error('API Error');
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      const botMsgId = Date.now() + 1;
+      
+      // Add empty bot message first
+      setMessages(prev => [...prev, { id: botMsgId, role: 'model', text: '' }]);
+      setIsLoading(false); // We can stop loading since it's streaming now
+      
+      let fullText = '';
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        
+        const chunkStr = decoder.decode(value, { stream: true });
+        const lines = chunkStr.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const dataStr = line.slice(6);
+            if (dataStr.trim() === '[DONE]') continue;
+            
+            try {
+              const parsed = JSON.parse(dataStr);
+              if (parsed.text) {
+                fullText += parsed.text;
+                setMessages(prev => prev.map(m => m.id === botMsgId ? { ...m, text: fullText } : m));
+              } else if (parsed.error) {
+                toast.error(parsed.error);
+              }
+            } catch (e) {
+              console.error("Parse error in stream:", e);
+            }
+          }
+        }
+      }
     } catch (error) {
       toast.error("Failed to send message");
       const botMsg = { id: Date.now() + 1, role: 'model', text: "I'm having trouble connecting to my servers right now. Please try again later!" };
       setMessages(prev => [...prev, botMsg]);
-    } finally {
       setIsLoading(false);
     }
   };
