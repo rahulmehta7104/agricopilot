@@ -414,6 +414,20 @@ npm run dev
 * Backend API: `https://agricopilot-backend.onrender.com`
 * API Docs: `https://agricopilot-backend.onrender.com/docs`
 
+## Deployment Documentation
+
+* **Live Frontend URL:** `https://agricopilot.vercel.app`
+* **Live Backend URL:** `https://agricopilot-backend.onrender.com`
+* **API Documentation:** `https://agricopilot-backend.onrender.com/docs`
+
+### Tech Stack Summary
+* **Frontend:** React + Vite, styled with Tailwind CSS, deployed on **Vercel** for global edge CDN distribution.
+* **Backend:** Node.js + Express REST API, deployed as a Web Service on **Render**.
+* **Database:** PostgreSQL database with connection pooling, hosted on **Supabase** and accessed via Prisma ORM.
+
+### Known Limitations (Free Tier)
+> **Note on Cold Starts:** The backend API is deployed on Render's free tier. Render automatically spins down free web services after 15 minutes of inactivity. As a result, **the first request made to the API after an idle period may take 30-60 seconds to complete** while the server wakes up. Subsequent requests will process at normal speeds.
+
 ### Dependencies
 
 #### Frontend
