@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
@@ -120,4 +121,19 @@ export const googleCallback = async (req: Request, res: Response): Promise<void>
   // Redirect to frontend with token
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
   res.redirect(`${frontendUrl}/login?token=${token}`);
+};
+
+export const getMe = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ status: 'error', message: 'Not authenticated' });
+      return;
+    }
+    res.status(200).json({
+      status: 'success',
+      data: req.user
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
+  }
 };

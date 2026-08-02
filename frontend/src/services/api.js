@@ -20,6 +20,7 @@ api.interceptors.request.use(
   }
 );
 
+export const getMe = () => api.get('/auth/me');
 export const getAllCrops = () => api.get('/crops');
 export const getCropById = (id) => api.get(`/crops/${id}`);
 export const createCrop = (data) => api.post('/crops', data);

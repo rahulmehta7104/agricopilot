@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { register, login, googleCallback } from '../controllers/auth.controller';
+import { register, login, googleCallback, getMe } from '../controllers/auth.controller';
 import { authLimiter } from '../middleware/rateLimiter';
+import { requireAuth } from '../middleware/auth.middleware';
 
 const router = Router();
 
@@ -37,6 +38,20 @@ router.post('/register', authLimiter, register);
  *         description: Success
  */
 router.post('/login', authLimiter, login);
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: GET /api/auth/me
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+router.get('/me', requireAuth, getMe as any);
 
 // OAuth routes
 /**

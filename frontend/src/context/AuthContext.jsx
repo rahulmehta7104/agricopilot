@@ -28,13 +28,24 @@ export const AuthProvider = ({ children }) => {
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
       
-      // Schedule state updates asynchronously to avoid fast-refresh warnings
-      setTimeout(() => {
-        setToken(urlToken);
-      }, 0);
+      // Fetch user data with new token
+      api.get('/auth/me', { headers: { Authorization: `Bearer ${urlToken}` } })
+        .then(response => {
+          const userData = response.data.data;
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+          setToken(urlToken);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('Failed to fetch user after OAuth:', err);
+          setToken(null);
+          localStorage.removeItem('token');
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
     }
-    
-    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
