@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Bot, Loader2, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { startChatSession, sendChatMessage } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function AiChatModal({ isOpen, onClose }) {
@@ -9,6 +10,7 @@ export default function AiChatModal({ isOpen, onClose }) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chatSession, setChatSession] = useState(null);
+  const { user } = useAuth();
   const messagesEndRef = useRef(null);
 
   // Animation Stages: 'hidden' | 'robot-intro' | 'robot-blast' | 'chat-active'
@@ -47,7 +49,7 @@ export default function AiChatModal({ isOpen, onClose }) {
       const initChat = async () => {
         try {
           setIsLoading(true);
-          const res = await startChatSession();
+          const res = await startChatSession({ userId: user?.id, title: "Dashboard Chat" });
           setChatSession(res.data.data.chatId || res.data.data.id);
           setMessages([
             { id: 1, role: 'model', text: res.data.data.message || "Hello! I am AgriCopilot. How can I help?" }

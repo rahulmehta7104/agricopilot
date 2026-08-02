@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 import { RecommendationStatus } from '@prisma/client';
+import { aiService } from '../services/ai.service';
 
 export const getDashboardData = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -66,26 +67,26 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
       ? Math.round(farm.crops.reduce((acc, fc) => acc + (fc.healthScore || 100), 0) / farm.crops.length)
       : 100;
 
-    // 4. Format Insights
-    const insights = farm.recommendations.slice(0, 2).map(r => ({
-      id: r.id,
-      title: r.title,
-      desc: r.description.substring(0, 100) + '...',
-      urgent: r.metadata && (r.metadata as any).urgency === 'HIGH' ? true : false
-    }));
-
-    // If no insights exist, provide a fallback
-    if (insights.length === 0) {
-      insights.push({ id: '1', title: 'System Optimized', desc: 'All farm parameters are currently optimal.', urgent: false });
+    // 4 & 5. Fetch dynamic AI insights and activities
+    const farmContext = `Location: ${farm.location || 'Unknown'}, Soil: ${farm.soilType}, Crops: ${dashboardCrops.map(c => c.cropName).join(', ') || 'None yet'}`;
+    let insights = [];
+    let activities = [];
+    
+    try {
+      const dynamicDataStr = await aiService.getDashboardInsights(farmContext);
+      const dynamicData = JSON.parse(dynamicDataStr);
+      insights = dynamicData.insights || [];
+      activities = dynamicData.activities || [];
+    } catch (e) {
+      console.error('Failed to parse dashboard AI response', e);
+      // Fallback
+      insights = [{ id: '1', title: 'System Optimized', desc: 'All farm parameters are currently optimal.', urgent: false }];
+      activities = [
+        { id: 'a1', title: 'Fertilizer applied', time: '2 hours ago', desc: 'Sector A - Nitrogen mix' },
+        { id: 'a2', title: 'AI Report generated', time: 'Yesterday', desc: 'Weekly yield forecast completed.' },
+        { id: 'a3', title: 'System update', time: '2 days ago', desc: 'New weather model deployed successfully.' }
+      ];
     }
-
-    // 5. Construct Activities Timeline
-    // We'll mock some recent activities mixed with actual db timestamps
-    const activities = [
-      { id: 'a1', title: 'Fertilizer applied', time: '2 hours ago', desc: 'Sector A - Nitrogen mix' },
-      { id: 'a2', title: 'AI Report generated', time: 'Yesterday', desc: 'Weekly yield forecast completed.' },
-      { id: 'a3', title: 'System update', time: '2 days ago', desc: 'New weather model deployed successfully.' }
-    ];
 
     // Fetch real live weather score here using the OpenWeatherMap API
     // If not available instantly, fallback to an algorithmic simulation based on coordinates for speed

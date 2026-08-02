@@ -44,7 +44,7 @@ export class AiChatService {
 
     try {
       const responseStream = await ai.models.generateContentStream({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-1.5-flash',
         contents,
         config: {
           systemInstruction: systemInstruction,

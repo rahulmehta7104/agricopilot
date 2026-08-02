@@ -38,7 +38,7 @@ Context:
 ${dataContext}`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-1.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json'
@@ -98,7 +98,7 @@ Context:
 ${schemeContext}`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-1.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json'
@@ -158,7 +158,7 @@ Farm Details:
 - Upcoming Season: ${season}`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-1.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json'
@@ -192,6 +192,62 @@ Farm Details:
           marketDemand: "MEDIUM"
         }
       ]);
+    }
+  }
+
+  /**
+   * Generates dynamic insights and recent activity for the dashboard.
+   */
+  public async getDashboardInsights(farmContext: string): Promise<string> {
+    try {
+      const prompt = `You are an AI agricultural assistant analyzing a farmer's dashboard.
+Based on the following farm context, generate 2 critical insights and 3 realistic recent activities.
+You MUST output your response strictly as a JSON object matching this exact structure, with no markdown formatting or extra text:
+{
+  "insights": [
+    {
+      "id": "string",
+      "title": "string",
+      "desc": "string (max 100 chars)",
+      "urgent": boolean
+    }
+  ],
+  "activities": [
+    {
+      "id": "string",
+      "title": "string",
+      "time": "string (e.g. '2 hours ago', 'Yesterday')",
+      "desc": "string"
+    }
+  ]
+}
+
+Farm Context:
+${farmContext}`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-1.5-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json'
+        }
+      });
+
+      return response.text || '';
+    } catch (error: any) {
+      console.error('Dashboard insights error, falling back to mock data:', error.message);
+      
+      // Fallback to static mock data if AI fails
+      return JSON.stringify({
+        insights: [
+          { id: '1', title: 'System Optimized', desc: 'All farm parameters are currently optimal.', urgent: false }
+        ],
+        activities: [
+          { id: 'a1', title: 'Fertilizer applied', time: '2 hours ago', desc: 'Sector A - Nitrogen mix' },
+          { id: 'a2', title: 'AI Report generated', time: 'Yesterday', desc: 'Weekly yield forecast completed.' },
+          { id: 'a3', title: 'System update', time: '2 days ago', desc: 'New weather model deployed successfully.' }
+        ]
+      });
     }
   }
 }
