@@ -5,6 +5,7 @@ import routes from './routes';
 import { errorHandler } from './middleware/errorHandler';
 
 const app: Application = express();
+app.set('trust proxy', 1);
 
 // Security Middlewares
 app.use(helmet());
