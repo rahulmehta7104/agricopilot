@@ -22,6 +22,17 @@ Farmers often struggle to access reliable information regarding crop selection, 
 * 📚 RAG-based Agricultural Knowledge Assistant
 * 👨‍🌾 Personalized Farmer Dashboard
 
+## Screenshots
+
+![Dashboard Overview](https://via.placeholder.com/800x450.png?text=Dashboard+Overview+Screenshot)
+*AgriCopilot Main Dashboard with dynamic Weather and Market AI Predictions.*
+
+![AI Crop Recommendations](https://via.placeholder.com/800x450.png?text=Crop+Recommendations+Screenshot)
+*Personalized Crop Recommendations based on localized geographic and seasonal data.*
+
+![Conversational AI Copilot](https://via.placeholder.com/800x450.png?text=Conversational+AI+Screenshot)
+*Interactive RAG-based Agricultural Knowledge Assistant.*
+
 ## Tech Stack
 
 ### Frontend
@@ -94,18 +105,6 @@ AgriCopilot/
 
 ### Week 10
 * Documentation & Portfolio
-
-## Current Status
-
-✅ Week 1 Completed
-✅ Week 2 Completed
-✅ Week 3 Completed
-✅ Week 4 Completed
-✅ Week 5 Completed
-✅ Week 6 Completed
-✅ Week 7 Completed
-✅ Week 8 Completed
-✅ Week 9 Completed
 
 ### Completed Work
 
@@ -231,42 +230,59 @@ AgriCopilot/
 * Updated Google OAuth Authorized Redirect URIs for production domains
 * Integrated interactive Swagger API Documentation (`/docs`) into the backend codebase
 
+#### Week 10
+
+**Documentation, Premium UI & AI Fallbacks**
+* Finalized project documentation and drafted presentation portfolio
+* Refined Dashboard components with localized dark mode panels, glowing orbs, and text gradients for a premium aesthetic
+* Resolved light-mode visibility bugs across Contact, Privacy Policy, and Terms of Service pages
+* Mitigated AI free-tier quota limits by engineering graceful fallbacks to structured mock data, ensuring 100% UI uptime
+* Added dynamic "Field Condition" insights to the Weather Widget
+* Generated and integrated a new realistic farm landscape background for the About page
+
 ### Current Application Pages
 
 * Home
 * About
+* Features
+* Contact
 * Dashboard
 * Login
+* Register
+* Privacy Policy
+* Terms of Service
 
 ### Current Features
 
 #### Frontend
 * Responsive Navbar
 * Hero Section
-* Feature Cards
-* Dashboard Widgets
-* Mobile Navigation Menu
-* Modern Footer
-* Responsive Layout
-* Dark / Light Theme Support
-* Theme Persistence
-* Component Showcase Page
+* Premium Glassmorphism UI
+* Dark / Light Theme Support (Persistent)
+* AI Chat Modal (Conversational Copilot)
+* Dynamic Weather Insights Widget
+* Market Trend Analysis Widget
+* Crop Recommendation Engine
+* Government Schemes Carousel
+* Farm Onboarding Flow
+* JWT Authentication Flow
+* Responsive Layout (Mobile, Tablet, Desktop)
 * Reusable UI Component Library
 * Toast Notifications
-* Modal System
-* Skeleton Loaders
-* Backend API Integration
-* Dynamic Dashboard Data
-* Loading State
-* Error Handling
+* Modal & Skeleton Loader System
+* Backend API Integration with Graceful Error Handling
 
 #### Backend
 * Express REST API
+* JWT Generation & Verification
+* Google OAuth Integration
+* Rate Limiting (Brute-force protection)
+* Gemini AI API Integration (Prompt Engineering)
+* AI Rate Limit Fallback (Mock Data Service)
+* Connection Pooling (Supabase)
 * CRUD Operations
-* Search Functionality
-* Request Validation
-* Error Handling Middleware
-* CORS
+* Request Validation (Zod)
+* Centralized Error Handling Middleware
 * Environment Variables
 * PostgreSQL Database
 * Prisma ORM
@@ -284,14 +300,15 @@ AgriCopilot/
 | DELETE | `/api/crops/:id` | Delete a crop by ID |
 | GET | `/api/crops/search?q=` | Search crops by name or season |
 
-### New Enterprise Endpoints (Week 5)
+### New Enterprise Endpoints (Week 5-10)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/dashboard` | Aggregated dashboard telemetry and data |
-| POST | `/api/users/register` | Register a new user |
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Authenticate user & return JWT |
 | GET | `/api/farms/profile/:id` | Get farms for a profile |
-| POST | `/api/recommendations` | Generate an AI recommendation |
+| GET | `/api/services/weather` | Fetch live localized weather data |
 | POST | `/api/chat/message` | Send message to AI Copilot |
 
 ### UI Component Library
@@ -313,33 +330,6 @@ Components:
 * ThemeToggle
 
 These components are designed to promote consistency, maintainability, and scalability across the application.
-
-### Next Milestone
-
-Week 10: Documentation & Portfolio
-
-Upcoming Focus:
-
-* Finalize project documentation
-* Create presentation slides and demo videos
-* Polish GitHub repository (architecture diagrams, README enhancements)
-* Final code review and cleanups
-
-## Internship Progress
-
-| Week | Module | Status |
-|--------|--------|--------|
-| Week 1 | Project Setup & Planning | ✅ Completed |
-| Week 2 | Frontend Foundations | ✅ Completed |
-| Week 3 | UI/UX & Component Design | ✅ Completed |
-| Week 4 | Backend & API Development | ✅ Completed |
-| Week 5 | Database Design & Management | ✅ Completed |
-| Week 6 | Authentication & Security | ✅ Completed |
-| Week 7 | AI Integration | ✅ Completed |
-| Week 8 | Frontend Integration & Polish | ✅ Completed |
-| Week 9 | Deployment | ✅ Completed |
-| Week 10 | Documentation & Portfolio | ⏳ Pending |
-
 
 ## Setup Instructions
 
@@ -427,6 +417,10 @@ npm run dev
 
 ### Known Limitations (Free Tier)
 > **Note on Cold Starts:** The backend API is deployed on Render's free tier. Render automatically spins down free web services after 15 minutes of inactivity. As a result, **the first request made to the API after an idle period may take 30-60 seconds to complete** while the server wakes up. Subsequent requests will process at normal speeds.
+> 
+> **AI Rate Limits:** We utilize the Google Gemini Free Tier. If global rate limits are exceeded (`429 Too Many Requests`), the backend is engineered to gracefully catch the error and seamlessly fall back to providing structured mock data so the UI remains fully functional.
+>
+> **Location Tracking:** The Weather and Market AI widgets dynamically fetch the latitude/longitude saved in the user's Farm Profile database to deliver localized insights. We do not currently use the browser's live `navigator.geolocation` popup to track the user's physical device location. If a user has not set a farm location, or if the AI rate limit is exceeded, the system gracefully falls back to a hardcoded baseline location (e.g., Dehradun, India) as a robust safety net to prevent UI crashes.
 
 ### Dependencies
 
@@ -434,12 +428,17 @@ npm run dev
 * React
 * Vite
 * Tailwind CSS v4
+* Framer Motion
 * React Router DOM
 * Lucide React
 * Axios
+* React Hot Toast
 
 #### Backend
 * Express
+* JSONWebToken (JWT) & bcryptjs
+* Google GenAI SDK (`@google/genai`)
+* Passport
 * CORS
 * dotenv
 * Nodemon
@@ -506,7 +505,13 @@ erDiagram
     }
 ```
 
-Authentication and AI services will be implemented in upcoming development phases.
+
+## Credits & Acknowledgements
+
+* **Design & Development:** Rahul Mehta
+* **UI/UX Inspiration:** Modern SaaS agricultural platforms and glassmorphism design principles.
+* **AI Intelligence:** Powered by Google Gemini (`gemini-3.5-flash`).
+* **Icons & Assets:** Iconography by [Lucide React](https://lucide.dev/). Background imagery generated via AI tools.
 
 ## Author
 
