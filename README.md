@@ -24,14 +24,14 @@ Farmers often struggle to access reliable information regarding crop selection, 
 
 ## Screenshots
 
-![Dashboard Overview](https://via.placeholder.com/800x450.png?text=Dashboard+Overview+Screenshot)
+![Dashboard Overview](./docs/screenshots/overview.png)
 *AgriCopilot Main Dashboard with dynamic Weather and Market AI Predictions.*
 
-![AI Crop Recommendations](https://via.placeholder.com/800x450.png?text=Crop+Recommendations+Screenshot)
-*Personalized Crop Recommendations based on localized geographic and seasonal data.*
-
-![Conversational AI Copilot](https://via.placeholder.com/800x450.png?text=Conversational+AI+Screenshot)
+![Conversational AI Copilot](./docs/screenshots/chatbot.png)
 *Interactive RAG-based Agricultural Knowledge Assistant.*
+
+![AI Crop Planner](./docs/screenshots/crop%20planner.png)
+*Personalized Crop Recommendations based on localized geographic and seasonal data.*
 
 ## Tech Stack
 
