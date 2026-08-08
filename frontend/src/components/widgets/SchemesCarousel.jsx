@@ -43,17 +43,17 @@ export default function SchemesCarousel({ profile = 'Small farmer in India growi
     <motion.div 
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="glass-panel rounded-[2rem] p-8 border border-slate-500/20 shadow-lg relative overflow-hidden h-full flex flex-col group"
+      className="glass-panel rounded-[2rem] p-8 border border-slate-200 dark:border-slate-500/20 shadow-lg relative overflow-hidden h-full flex flex-col group"
     >
       <div className="absolute -right-10 -bottom-10 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-700 pointer-events-none">
-        <Landmark className="w-64 h-64 text-white" />
+        <Landmark className="w-64 h-64 text-slate-900 dark:text-white" />
       </div>
 
-      <div className="flex justify-between items-center mb-6 border-b border-slate-500/20 pb-4 relative z-10">
-        <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-          <Landmark className="w-6 h-6 text-emerald-400" /> Recommended Subsidies
+      <div className="flex justify-between items-center mb-6 border-b border-slate-200 dark:border-slate-500/20 pb-4 relative z-10">
+        <h3 className="text-xl font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+          <Landmark className="w-6 h-6 text-emerald-500 dark:text-emerald-400" /> Recommended Subsidies
         </h3>
-        <span className="text-xs font-medium text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
+        <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-500/20 dark:border-emerald-400/20">
           AI Matched
         </span>
       </div>
@@ -65,9 +65,9 @@ export default function SchemesCarousel({ profile = 'Small farmer in India growi
             <p className="font-medium text-sm">Scanning government databases...</p>
           </div>
         ) : !schemes ? (
-          <div className="text-slate-400 text-sm h-full flex items-center justify-center">No schemes found for this profile.</div>
+          <div className="text-slate-500 dark:text-slate-400 text-sm h-full flex items-center justify-center">No schemes found for this profile.</div>
         ) : schemes.isText ? (
-          <div className="text-slate-300 text-sm whitespace-pre-line leading-relaxed font-light">
+          <div className="text-slate-600 dark:text-slate-300 text-sm whitespace-pre-line leading-relaxed font-light">
             {schemes.text}
           </div>
         ) : (
@@ -78,22 +78,22 @@ export default function SchemesCarousel({ profile = 'Small farmer in India growi
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-slate-800/40 border border-slate-700/50 hover:border-emerald-500/30 rounded-2xl p-5 transition-all duration-300 hover:bg-slate-800/60 group/card cursor-default shadow-sm hover:shadow-md relative overflow-hidden"
+                className="bg-white/50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/50 hover:border-emerald-500/30 rounded-2xl p-5 transition-all duration-300 hover:bg-slate-50 dark:hover:bg-slate-700/80 group/card cursor-default shadow-sm hover:shadow-md relative overflow-hidden"
               >
                 <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500/50 group-hover/card:bg-emerald-400 transition-colors" />
                 <div className="flex justify-between items-start gap-4 mb-3">
-                  <h4 className="font-bold text-white text-lg">{scheme.name}</h4>
-                  <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap shadow-inner">
+                  <h4 className="font-bold text-slate-900 dark:text-white text-lg">{scheme.name}</h4>
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap shadow-inner">
                     {scheme.benefit}
                   </div>
                 </div>
-                <p className="text-slate-300 text-sm leading-relaxed font-light mb-4">{scheme.description}</p>
+                <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed font-light mb-4">{scheme.description}</p>
                 <div className="flex justify-end">
                   <a 
                     href={`https://${scheme.link}`} 
                     target="_blank" 
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 bg-emerald-400/10 hover:bg-emerald-400/20 px-4 py-2 rounded-xl transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-300 bg-emerald-500/10 dark:bg-emerald-400/10 hover:bg-emerald-500/20 dark:hover:bg-emerald-400/20 px-4 py-2 rounded-xl transition-colors cursor-pointer"
                   >
                     View Details <ExternalLink className="w-3.5 h-3.5" />
                   </a>
@@ -104,8 +104,8 @@ export default function SchemesCarousel({ profile = 'Small farmer in India growi
         )}
       </div>
 
-      <div className="mt-2 flex justify-end relative z-10 border-t border-slate-500/20 pt-4">
-        <button className="text-emerald-400 text-sm font-medium flex items-center gap-1 hover:text-emerald-300 transition-colors group/btn">
+      <div className="mt-2 flex justify-end relative z-10 border-t border-slate-200 dark:border-slate-500/20 pt-4">
+        <button className="text-emerald-600 dark:text-emerald-400 text-sm font-medium flex items-center gap-1 hover:text-emerald-500 dark:hover:text-emerald-300 transition-colors group/btn">
           View full eligibility catalog 
           <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </button>

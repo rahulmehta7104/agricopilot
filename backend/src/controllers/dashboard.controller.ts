@@ -73,12 +73,15 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
     let activities = [];
     
     try {
-      const dynamicDataStr = await aiService.getDashboardInsights(farmContext);
+      let dynamicDataStr = await aiService.getDashboardInsights(farmContext);
+      // Clean up markdown block if present
+      dynamicDataStr = dynamicDataStr.replace(/```json/gi, '').replace(/```/gi, '').trim();
+      
       const dynamicData = JSON.parse(dynamicDataStr);
       insights = dynamicData.insights || [];
       activities = dynamicData.activities || [];
     } catch (e) {
-      console.error('Failed to parse dashboard AI response', e);
+      console.warn('Dashboard AI response parsing failed, using mock data.');
       // Fallback
       insights = [{ id: '1', title: 'System Optimized', desc: 'All farm parameters are currently optimal.', urgent: false }];
       activities = [

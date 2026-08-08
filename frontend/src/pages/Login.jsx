@@ -3,10 +3,12 @@ import { Leaf } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [focusedInput, setFocusedInput] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { login, user } = useAuth();
   const navigate = useNavigate();
@@ -14,7 +16,6 @@ export default function Login() {
 
   const from = location.state?.from?.pathname || '/dashboard';
 
-  // Auto-redirect if user gets populated from URL token in the background
   useEffect(() => {
     if (user) {
       navigate(from, { replace: true });
@@ -40,65 +41,79 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-50 relative overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
-      {/* Background Decorative Elements */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-emerald-200/40 blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-green-200/30 blur-[120px]" />
-      </div>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 relative overflow-hidden py-12 px-4 sm:px-6 lg:px-8 transition-colors"
+    >
+      <div className="absolute inset-0 bg-grid-pattern opacity-30 dark:opacity-20 z-0 pointer-events-none"></div>
+      
+      <div className="absolute top-[10%] left-[10%] w-[40%] h-[40%] bg-brand-primary/20 dark:bg-brand-primary/10 rounded-full blur-[120px] pointer-events-none animate-pulse-glow z-0"></div>
+      <div className="absolute bottom-[20%] right-[10%] w-[30%] h-[30%] bg-brand-accent/20 dark:bg-brand-accent/10 rounded-full blur-[120px] pointer-events-none animate-pulse-glow z-0" style={{ animationDelay: '1.5s' }}></div>
 
-      <div className="max-w-md w-full relative z-10">
-        {/* Card */}
-        <div className="bg-white/70 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_20px_60px_rgb(0,0,0,0.05)] border border-white/80 p-8 sm:p-12">
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="max-w-md w-full relative z-10"
+      >
+        <div className="glass-panel rounded-[2.5rem] shadow-2xl p-8 sm:p-12 border border-slate-200 dark:border-white/10">
           
           <div className="text-center mb-10">
-            <div className="mx-auto h-16 w-16 bg-gradient-to-br from-emerald-100 to-emerald-50 border border-emerald-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-              <Leaf className="h-8 w-8 text-emerald-600" />
+            <div className="mx-auto h-16 w-16 bg-brand-primary/10 border border-brand-primary/20 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+              <Leaf className="h-8 w-8 text-brand-primary" />
             </div>
-            <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Welcome back</h2>
-            <p className="mt-3 text-base text-slate-500 font-medium">
+            <h2 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Welcome back</h2>
+            <p className="mt-3 text-base text-slate-500 dark:text-slate-400 font-medium">
               Sign in to your AgriCopilot account
             </p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-5">
-              <div>
-                <label htmlFor="email" className="block text-sm font-bold text-slate-700 mb-2">
+            <div className="space-y-6">
+              <div className="relative group">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setFocusedInput('email')}
+                  onBlur={() => setFocusedInput(null)}
+                  className="block w-full px-4 pt-6 pb-2 text-slate-900 dark:text-white bg-transparent border-b-2 border-slate-300 dark:border-slate-700 focus:outline-none focus:border-brand-primary transition-colors peer"
+                  placeholder=" "
+                />
+                <label 
+                  htmlFor="email" 
+                  className={`absolute left-4 top-4 text-slate-500 transition-all duration-300 transform -translate-y-4 scale-75 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-brand-primary ${focusedInput === 'email' ? 'text-brand-primary' : ''}`}
+                >
                   Email address
                 </label>
-                <div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="farmer@example.com"
-                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
-                  />
-                </div>
               </div>
 
-              <div>
-                <label htmlFor="password" className="block text-sm font-bold text-slate-700 mb-2">
+              <div className="relative group">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setFocusedInput('password')}
+                  onBlur={() => setFocusedInput(null)}
+                  className="block w-full px-4 pt-6 pb-2 text-slate-900 dark:text-white bg-transparent border-b-2 border-slate-300 dark:border-slate-700 focus:outline-none focus:border-brand-primary transition-colors peer"
+                  placeholder=" "
+                />
+                 <label 
+                  htmlFor="password" 
+                  className={`absolute left-4 top-4 text-slate-500 transition-all duration-300 transform -translate-y-4 scale-75 origin-left peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-brand-primary ${focusedInput === 'password' ? 'text-brand-primary' : ''}`}
+                >
                   Password
                 </label>
-                <div>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="appearance-none block w-full px-5 py-3.5 bg-white/50 border border-slate-200 rounded-2xl shadow-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm font-medium transition-all"
-                  />
-                </div>
               </div>
             </div>
 
@@ -108,25 +123,25 @@ export default function Login() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-slate-300 rounded cursor-pointer"
+                  className="h-4 w-4 text-brand-primary focus:ring-brand-primary border-slate-300 rounded cursor-pointer"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm font-semibold text-slate-600 cursor-pointer">
+                <label htmlFor="remember-me" className="ml-2 block text-sm font-semibold text-slate-600 dark:text-slate-400 cursor-pointer">
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-bold text-emerald-600 hover:text-emerald-500 transition-colors">
+                <a href="#" className="font-bold text-brand-primary hover:text-brand-secondary transition-colors">
                   Forgot password?
                 </a>
               </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-4">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-2xl shadow-[0_8px_20px_rgba(16,185,129,0.2)] text-base font-bold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full flex justify-center py-4 px-4 rounded-xl shadow-[0_8px_20px_rgba(16,185,129,0.2)] text-base font-bold text-white bg-gradient-primary hover:shadow-[0_8px_25px_rgba(16,185,129,0.4)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition-all duration-300 transform hover:-translate-y-1 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Signing in...' : 'Sign in'}
               </button>
@@ -134,10 +149,10 @@ export default function Login() {
             
             <div className="relative mt-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200"></div>
+                <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-slate-50 text-slate-500 font-medium">Or continue with</span>
+                <span className="px-2 bg-slate-50 dark:bg-slate-900 text-slate-500 font-medium rounded-full">Or continue with</span>
               </div>
             </div>
 
@@ -145,7 +160,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center py-4 px-4 border border-slate-300 rounded-2xl shadow-sm bg-white text-base font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
+                className="w-full flex items-center justify-center py-4 px-4 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm bg-white dark:bg-slate-800 text-base font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
               >
                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -159,15 +174,15 @@ export default function Login() {
           </form>
           
           <div className="mt-8 text-center">
-            <p className="text-sm text-slate-500 font-medium">
+            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               Don't have an account?{' '}
-              <Link to="/register" className="font-bold text-emerald-600 hover:text-emerald-500 cursor-pointer">
+              <Link to="/register" className="font-bold text-brand-primary hover:text-brand-secondary cursor-pointer">
                 Sign up
               </Link>
             </p>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

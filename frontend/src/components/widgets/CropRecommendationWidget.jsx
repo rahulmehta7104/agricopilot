@@ -47,24 +47,24 @@ export default function CropRecommendationWidget({ location = 'India', initialSo
   return (
     <div className="flex flex-col h-full gap-6">
       {/* Input Section */}
-      <div className="glass-panel rounded-[2rem] p-8 border border-emerald-500/20 shadow-lg relative overflow-hidden bg-slate-900/50">
-        <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-emerald-500/10 blur-[60px] rounded-full pointer-events-none" />
+      <div className="bg-white/60 dark:bg-slate-800/80 backdrop-blur-[24px] rounded-[2rem] p-8 border border-slate-200 dark:border-emerald-500/20 shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-emerald-500/15 blur-[60px] rounded-full pointer-events-none" />
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div>
-            <h3 className="text-2xl font-bold text-white flex items-center gap-2 mb-2">
-              <Sparkles className="w-6 h-6 text-emerald-400" /> AI Crop Planner
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-2">
+              <Sparkles className="w-6 h-6 text-emerald-500 dark:text-emerald-400" /> AI Crop Planner
             </h3>
-            <p className="text-emerald-100/60 text-sm">Get expert AI advice on what to plant next based on your specific conditions.</p>
+            <p className="text-emerald-800/70 dark:text-emerald-100/60 text-sm">Get expert AI advice on what to plant next based on your specific conditions.</p>
           </div>
           
           <div className="flex flex-wrap items-end gap-4 w-full md:w-auto">
             <div className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
-              <label className="text-xs font-semibold text-emerald-100/80 uppercase tracking-wider pl-1">Soil Type</label>
+              <label className="text-xs font-semibold text-emerald-800 dark:text-emerald-100/80 uppercase tracking-wider pl-1">Soil Type</label>
               <select 
                 value={soilType}
                 onChange={(e) => setSoilType(e.target.value)}
-                className="w-full px-4 py-2.5 bg-slate-800/80 rounded-xl text-emerald-50 text-sm font-medium border border-emerald-500/30 shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer appearance-none"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-slate-800/80 rounded-xl text-slate-900 dark:text-emerald-50 text-sm font-medium border border-emerald-500/30 shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer appearance-none"
               >
                 {/* Always show the user's DB soil type as the first 'Current' option if it's in the list */}
                 {SOIL_TYPES.includes(initialSoilType) && (
@@ -77,11 +77,11 @@ export default function CropRecommendationWidget({ location = 'India', initialSo
             </div>
             
             <div className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
-              <label className="text-xs font-semibold text-emerald-100/80 uppercase tracking-wider pl-1">Season</label>
+              <label className="text-xs font-semibold text-emerald-800 dark:text-emerald-100/80 uppercase tracking-wider pl-1">Season</label>
               <select 
                 value={season}
                 onChange={(e) => setSeason(e.target.value)}
-                className="w-full px-4 py-2.5 bg-slate-800/80 rounded-xl text-emerald-50 text-sm font-medium border border-emerald-500/30 shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer appearance-none"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-slate-800/80 rounded-xl text-slate-900 dark:text-emerald-50 text-sm font-medium border border-emerald-500/30 shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer appearance-none"
               >
                 {SEASONS.map(s => (
                   <option key={s} value={s}>{s}</option>
@@ -128,7 +128,7 @@ export default function CropRecommendationWidget({ location = 'India', initialSo
               <motion.div 
                 key={idx}
                 initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.1 }}
-                className={`glass-panel p-6 rounded-[2rem] border relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 ${idx === 0 ? 'bg-emerald-900/40 border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.15)]' : 'bg-slate-900/40 border-slate-700/50 hover:border-emerald-500/30'}`}
+                className={`p-6 rounded-[2rem] border relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 backdrop-blur-[24px] ${idx === 0 ? 'bg-emerald-50/80 dark:bg-emerald-900/40 border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.15)]' : 'bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/50 hover:border-emerald-500/30'}`}
               >
                 {idx === 0 && (
                   <div className="absolute top-0 right-0 bg-emerald-500 text-emerald-950 text-[10px] font-bold px-3 py-1 rounded-bl-xl z-10 uppercase tracking-widest shadow-md">
@@ -137,28 +137,28 @@ export default function CropRecommendationWidget({ location = 'India', initialSo
                 )}
                 
                 <div className="flex items-center gap-4 mb-4">
-                  <div className={`p-3 rounded-2xl ${idx === 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-emerald-300'}`}>
+                  <div className={`p-3 rounded-2xl ${idx === 0 ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-300'}`}>
                     <Sprout className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-white leading-tight">{rec.name}</h4>
-                    <span className="text-xs font-semibold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">
+                    <h4 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-emerald-500 dark:from-emerald-300 dark:to-white leading-tight">{rec.name}</h4>
+                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">
                       {rec.confidence} Match
                     </span>
                   </div>
                 </div>
                 
-                <p className="text-slate-300 text-sm leading-relaxed mb-6 min-h-[60px] line-clamp-3">
+                <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6 min-h-[60px] line-clamp-3">
                   {rec.reason}
                 </p>
                 
-                <div className="space-y-3 pt-4 border-t border-slate-700/50">
+                <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700/50">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-400 flex items-center gap-1.5"><Target className="w-4 h-4" /> Est. Yield</span>
-                    <span className="font-bold text-white">{rec.expectedYield}</span>
+                    <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><Target className="w-4 h-4" /> Est. Yield</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{rec.expectedYield}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-400 flex items-center gap-1.5"><MapPin className="w-4 h-4" /> Market Demand</span>
+                    <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><MapPin className="w-4 h-4" /> Market Demand</span>
                     <span className={`font-bold px-2 py-0.5 rounded text-xs ${
                       rec.marketDemand === 'HIGH' ? 'bg-emerald-500/20 text-emerald-400' : 
                       rec.marketDemand === 'MEDIUM' ? 'bg-amber-500/20 text-amber-400' : 
@@ -174,9 +174,10 @@ export default function CropRecommendationWidget({ location = 'India', initialSo
         )}
         
         {!recommendations && !loading && !error && (
-          <div className="glass-panel p-12 rounded-[2rem] border border-slate-700/50 text-center flex flex-col items-center justify-center min-h-[300px]">
-            <Sprout className="w-16 h-16 text-slate-700 mb-4" />
-            <h4 className="text-xl font-semibold text-slate-300 mb-2">Ready to plan your season?</h4>
+          <div className="bg-white/60 dark:bg-slate-800/80 backdrop-blur-[24px] p-12 rounded-[2rem] border border-slate-200 dark:border-emerald-500/20 text-center flex flex-col items-center justify-center min-h-[300px] shadow-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden group">
+            <div className="absolute inset-0 bg-brand-primary/5 dark:bg-brand-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <Sprout className="w-16 h-16 text-slate-400 dark:text-emerald-100/50 mb-4 relative z-10 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors duration-500" />
+            <h4 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">Ready to plan your season?</h4>
             <p className="text-slate-500 max-w-md">Select your soil type and upcoming season above, and our AI will crunch historical data and market trends to recommend the best crops for your farm.</p>
           </div>
         )}

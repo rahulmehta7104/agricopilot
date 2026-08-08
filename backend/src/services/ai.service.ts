@@ -47,7 +47,8 @@ ${dataContext}`;
 
       return response.text || '';
     } catch (error: any) {
-      console.error('Market error, falling back to mock data:', error.message);
+      // Suppress noisy rate limit logs on free tier
+      // console.warn('Market AI fallback triggered due to quota/network.');
       
       // Dynamic Mock Data Fallback based on requested crop
       const isUpward = Math.random() > 0.4;
@@ -107,7 +108,7 @@ ${schemeContext}`;
 
       return response.text || '';
     } catch (error: any) {
-      console.error('Schemes error, falling back to mock data:', error.message);
+      // console.warn('Schemes AI fallback triggered.');
       return JSON.stringify([
         {
           id: 1,
@@ -167,7 +168,7 @@ Farm Details:
 
       return response.text || '';
     } catch (error: any) {
-      console.error('Crop recommendation error, falling back to mock data:', error.message);
+      // console.warn('Crop Recommendation AI fallback triggered.');
       
       return JSON.stringify([
         {
@@ -235,7 +236,7 @@ ${farmContext}`;
 
       return response.text || '';
     } catch (error: any) {
-      console.error('Dashboard insights error, falling back to mock data:', error.message);
+      // console.warn('Dashboard insights AI fallback triggered.');
       
       // Fallback to static mock data if AI fails
       return JSON.stringify({

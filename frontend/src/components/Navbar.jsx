@@ -23,10 +23,15 @@ export default function Navbar() {
     return null;
   }
 
+  const darkHeroRoutes = ['/', '/about', '/features', '/contact', '/privacy', '/terms'];
+  const hasDarkHero = darkHeroRoutes.includes(location.pathname);
+
   const navLinks = [
     { name: 'Home', path: '/' },
+    { name: 'Features', path: '/features' },
     { name: 'About', path: '/about' },
     { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Contact', path: '/contact' },
   ];
 
   return (
@@ -35,17 +40,17 @@ export default function Navbar() {
         scrolled 
           ? 'glass-panel border-b border-emerald-500/20 shadow-lg' 
           : 'bg-transparent border-b border-transparent'
-      }`}
+      } ${!scrolled && hasDarkHero ? 'text-white' : ''}`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
           {/* Logo Section */}
           <Link to="/" className="flex-shrink-0 flex items-center gap-3 group">
-            <div className="p-2 glass-panel rounded-2xl group-hover:scale-110 group-hover:rotate-3 group-hover:bg-emerald-500/20 transition-all duration-300 border border-emerald-400/30">
+            <div className="p-2 bg-slate-100/30 dark:bg-slate-900/50 backdrop-blur-md rounded-2xl group-hover:scale-110 group-hover:rotate-3 group-hover:bg-emerald-500/20 transition-all duration-300 border border-emerald-400/30">
               <Leaf className="h-7 w-7 text-emerald-400" />
             </div>
-            <span className="font-extrabold text-2xl tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors drop-shadow-md">
+            <span className={`font-extrabold text-2xl tracking-tight transition-colors drop-shadow-md ${!scrolled && hasDarkHero ? 'text-white group-hover:text-emerald-400' : 'text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400'}`}>
               AgriCopilot
             </span>
           </Link>
@@ -61,7 +66,7 @@ export default function Navbar() {
                   className="relative group py-2"
                 >
                   <span className={`text-sm font-semibold transition-colors duration-300 ${
-                    isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                    isActive ? (!scrolled && hasDarkHero ? 'text-emerald-400' : 'text-emerald-600 dark:text-emerald-400') : (!scrolled && hasDarkHero ? 'text-slate-200 group-hover:text-emerald-400' : 'text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400')
                   }`}>
                     {link.name}
                   </span>
@@ -82,12 +87,12 @@ export default function Navbar() {
             <ThemeToggle />
             {user ? (
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-emerald-100">
+                <span className={`text-sm font-medium ${!scrolled && hasDarkHero ? 'text-emerald-100' : 'text-slate-700 dark:text-emerald-100'}`}>
                   {user.name || user.email || 'Logged In'}
                 </span>
                 <button
                   onClick={logout}
-                  className="inline-flex items-center justify-center p-2 text-sm font-bold rounded-full text-slate-300 glass-panel hover:text-white hover:bg-emerald-500/20 transition-all duration-300"
+                  className={`inline-flex items-center justify-center p-2 text-sm font-bold rounded-full bg-slate-100/30 dark:bg-slate-800/50 backdrop-blur-md hover:bg-emerald-500/20 dark:hover:bg-emerald-500/40 transition-all duration-300 ${!scrolled && hasDarkHero ? 'text-white hover:text-emerald-300' : 'text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-white'}`}
                   title="Logout"
                 >
                   <LogOut className="w-5 h-5" />
@@ -132,8 +137,8 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 className={`block px-4 py-3 rounded-2xl text-base font-bold transition-all ${
                   isActive
-                    ? 'text-emerald-300 bg-emerald-500/20 border border-emerald-400/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]'
-                    : 'text-slate-200 hover:text-emerald-300 hover:bg-emerald-500/10'
+                    ? 'text-emerald-600 dark:text-emerald-300 bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-400/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]'
+                    : 'text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-emerald-500/10'
                 }`}
               >
                 {link.name}
@@ -147,7 +152,7 @@ export default function Navbar() {
                   logout();
                   setIsOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-bold rounded-full text-slate-200 glass-panel hover:bg-emerald-500/20 hover:text-white"
+                className="w-full flex items-center justify-center gap-2 px-6 py-3.5 text-base font-bold rounded-full text-slate-700 dark:text-slate-200 glass-panel hover:bg-emerald-500/10 dark:hover:bg-emerald-500/20 hover:text-emerald-600 dark:hover:text-white transition-all"
               >
                 <LogOut className="w-5 h-5" />
                 Logout

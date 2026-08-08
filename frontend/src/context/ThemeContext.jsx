@@ -5,8 +5,12 @@ const ThemeContext = createContext();
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     // Check localStorage first, then system preference
-    const stored = localStorage.getItem('theme');
-    if (stored) return stored;
+    try {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored;
+    } catch (e) {
+      console.warn('localStorage access denied by browser/extension');
+    }
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
@@ -17,7 +21,9 @@ export function ThemeProvider({ children }) {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('theme', theme);
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (e) {}
   }, [theme]);
 
   const toggleTheme = () => {
